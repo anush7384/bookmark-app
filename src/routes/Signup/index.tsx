@@ -1,15 +1,9 @@
-import { Dispatch } from "redux";
-import { connect } from "react-redux";
 import { Fragment } from "react";
 import styled from "styled-components";
 
-import { signUp } from "../../store/actions/index";
 import RightSignup from "./../../components/RightSignup/index";
 
 const logo:string = require('./../../utils/Images/Signup/signup_image.svg').default; 
-interface propsType {
-  signUp: (obj: objectType) => void;
-}
 
 const LeftContainer = styled.div`
   height: 100%;
@@ -69,7 +63,7 @@ export const LeftPage = () =>{
     </LeftContainer>
   );
 }
-const Signup = (props: propsType) => {
+const Signup = () => {
   return (
     <Fragment>
       <Container>
@@ -88,9 +82,4 @@ interface objectType {
   password: string;
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    signUp: (obj: objectType) => dispatch(signUp(obj)),
-  };
-};
-export default connect(null, mapDispatchToProps)(Signup);
+export default Signup;

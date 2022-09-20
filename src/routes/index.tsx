@@ -2,7 +2,8 @@ import { ReactNode } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import {v4 as uuid} from "uuid";
 
-import { ROOT, LOGIN } from "../utils/routepaths";
+import { ROOT, LOGIN, DASHBOARD } from "../utils/routepaths";
+import Dashboard from "./Dashboard/index";
 import Login from "./Login/index";
 import Signup from "./Signup/index";
 
@@ -17,16 +18,21 @@ const routesConfig = [
     component: <Login />,
     privateRoute: false,
   },
+  {
+    path: DASHBOARD,
+    component: <Dashboard />,
+    privateRoute : true,
+  }
 ];
 
 const ProtectedRoute = (component: ReactNode, privateRoute: boolean) => {
-  const isUserPresent = localStorage.getItem("accessToken");
+  const isUserPresent = localStorage.getItem("auth_token");
 
   const isValidRoute =
     (privateRoute && isUserPresent) || !(privateRoute || isUserPresent);
     if(isValidRoute)
       return component;
-  return <Navigate to = {privateRoute?'/login':'/home'}/>
+  return <Navigate to = {privateRoute?LOGIN:DASHBOARD}/>
 };
 
 const AppRoutes = () => {

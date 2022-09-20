@@ -38,6 +38,13 @@ export const styles = {
     flex-direction: row;
   `,
 
+  ErrorDiv:styled.div`
+    // height:10px;
+    padding:0;
+    font-size:small;
+    color:red;  
+  `,
+
   SignupDiv: styled.div`
     height: 50px;
     width: 100%;
@@ -63,7 +70,7 @@ export const styles = {
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin-top: 8%;
+    margin-top: 6%;
     height: 9%;
     margin-bottom: 0%;
     @media screen and (max-width: 400px) {

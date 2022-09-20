@@ -1,5 +1,17 @@
+import { useState, ReactElement } from "react";
 import styled from "styled-components";
-import { useState } from "react";
+import { Dispatch } from "redux";
+import { connect } from "react-redux";
+import {
+  Formik,
+  Field,
+  FormikState,
+  FormikHelpers,
+  FieldInputProps,
+  ErrorMessage,
+  useFormik,
+} from "formik";
+import * as Yup from "yup";
 
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Container } from "../Signup";
@@ -8,6 +20,7 @@ import Input from "../../components/shared/Input";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { RightContainer } from "../Signup";
 import { styles } from "./../../components/RightSignup/styles";
+import { loginRequest } from "../../store/actions";
 
 const ShowHideDiv = styled.div`
   width: 13%;
@@ -66,11 +79,45 @@ const NoPara = styled.p`
     margin-top: 2%;
   }
 `;
-const Login = () => {
+
+interface LoginPropsType {
+  login: (obj: any) => void;
+}
+
+interface FormValues {
+  email: string;
+  password: string;
+}
+
+const Login = (props: LoginPropsType): ReactElement => {
   const [show, setShow] = useState(false);
   const showHandler = () => {
     setShow(!show);
   };
+
+  const initialValues: FormValues = {
+    email: "",
+    password: "",
+  };
+
+  const registerSchema = Yup.object({
+    email: Yup.string().email().required("Please enter your email"),
+    password: Yup.string().min(6).required("Please enter your password"),
+  });
+  const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+    useFormik({
+      initialValues,
+      validationSchema: registerSchema,
+      validateOnChange: true,
+      validateOnBlur: false,
+
+      onSubmit: (values, action) => {
+        console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
+        props.login({email:values.email,password:values.password});
+
+        action.resetForm();
+      },
+    });
 
   return (
     <Container>
@@ -85,22 +132,40 @@ const Login = () => {
               <b>Log In</b>
             </styles.HeadDiv>
           </styles.HeadingDiv>
-          <styles.InputDiv>
-            <Input placeholder="Email" />
-          </styles.InputDiv>
-          <styles.InputDiv>
-            <Input type={show ? "text" : "password"} placeholder="Password" />
-            <ShowHideDiv>
-              {show ? (
-                <HideIcon onClick={showHandler} />
-              ) : (
-                <ShowIcon onClick={showHandler} />
-              )}
-            </ShowHideDiv>
-          </styles.InputDiv>
-          <styles.SignupDiv>
-            <styles.Button>Login</styles.Button>
-          </styles.SignupDiv>
+            <form onSubmit={handleSubmit}>
+              <styles.InputDiv>
+                <Input
+                  type="text"
+                  id="email"
+                  name="email"
+                  placeholder="Email"
+                  value={values.email}
+                  onChange={handleChange}
+                />
+              </styles.InputDiv>
+              {errors.email ? <styles.ErrorDiv>{errors.email}</styles.ErrorDiv> : <></>}
+              <styles.InputDiv>
+                <Input
+                  type={show ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  placeholder="Password"
+                  value={values.password}
+                  onChange={handleChange}
+                />
+                <ShowHideDiv>
+                  {show ? (
+                    <HideIcon onClick={showHandler} />
+                  ) : (
+                    <ShowIcon onClick={showHandler} />
+                  )}
+                </ShowHideDiv>
+              </styles.InputDiv>
+              {errors.password ? <styles.ErrorDiv>{errors.password}</styles.ErrorDiv> : <></>}
+              <styles.SignupDiv>
+                <styles.Button type="submit">Login</styles.Button>
+              </styles.SignupDiv>
+            </form>
           <ForgotDiv>
             <div>
               <ForgotA href="/forgot">forgot password</ForgotA>
@@ -117,4 +182,10 @@ const Login = () => {
   );
 };
 
-export default Login;
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    login: (obj: any) => dispatch(loginRequest(obj)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Login);

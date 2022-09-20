@@ -1,24 +1,36 @@
 import { UserAuthStateType, UserAuthActionType } from "./types"
-import {SIGNUP} from "../../actionTypes/index";
+import {actionTypes} from "../../actionTypes/index";
 
 const initialState:UserAuthStateType = {
     signedUpUsers:[],
+    error:"",
 }
 
 export const userAuth = (state = initialState, action:UserAuthActionType) => {
     switch (action.type) {
-      case SIGNUP:
+      // case actionTypes.SIGNUP_SUCCESS:
+      case "SIGNUP_SUCCESS":
         return {
           ...state,
-          signedUpUsers: [
-            ...state.signedUpUsers,
-            {
-              name: action.payload.name,
-              userName: action.payload.userName,
-              password: action.payload.password,
-            },
-          ],
+          signedUpUsers: [...state.signedUpUsers, { ...action.payload.user }],
         };
-        default:return state;
+      // case actionTypes.SIGNUP_FAILURE:
+      case "SIGNUP_FAILURE":
+        return {
+          ...state,
+          error: action.payload.message,
+        };
+      case "LOGIN_SUCCESS":
+        return {
+          ...state,
+          signedUpUsers: [...state.signedUpUsers, { ...action.payload.user }],
+        };
+      case "LOGIN_FAILURE":
+        return {
+          ...state,
+          error: action.payload.message,
+        };
+      default:
+        return state;
     }
 }

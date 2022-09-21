@@ -19,22 +19,27 @@ export const signUpFailure = (msg: string) => {
   };
 };
 
-interface SignUpUserType{
-  name:string,
-  email:string,
-  password:string,
+interface SignUpUserType {
+  name: string;
+  email: string;
+  password: string;
 }
 
 export const signUpRequest = (obj: SignUpUserType) => {
   return {
     type: actionTypes.SIGNUP_REQUESTED,
     payload: {
-      user:obj,
-  },
-}
+      user: obj,
+    },
+  };
 };
 
-export const loginRequest = (obj: any) => {
+interface LoginType {
+  email: string;
+  password: string;
+}
+
+export const loginRequest = (obj: LoginType) => {
   return {
     type: actionTypes.LOGIN_REQUESTED,
     payload: obj,
@@ -50,11 +55,97 @@ export const loginSuccess = (user: any) => {
   };
 };
 
-export const loginFailure = (msg:string) => {
-  return{
-    type:actionTypes.LOGIN_FAILURE,
-    payload:{
-      message:msg,
-    }
-  }
+export const loginFailure = (msg: string) => {
+  return {
+    type: actionTypes.LOGIN_FAILURE,
+    payload: {
+      message: msg,
+    },
+  };
+};
+
+export const createFolderRequest = (name: string) => {
+  return {
+    type: actionTypes.CREATE_FOLDER_REQUEST,
+    payload: {
+      name: name,
+    },
+  };
+};
+
+export const createFolderSuccess = (response: any) => {
+  return {
+    type: actionTypes.CREATE_FOLDER_SUCCESS,
+    payload: { folder: response },
+  };
+};
+
+export const createFolderFailure = (error: any) => {
+  return {
+    type: actionTypes.CREATE_FOLDER_FAILURE,
+    payload: { error: error },
+  };
+};
+
+export const requestAllFolders = () => {
+  return {
+    type: actionTypes.GET_ALL_FOLDERS_REQUEST,
+  };
+};
+
+export const getAllFoldersSuccess = (folders: any) => {
+  return {
+    type: actionTypes.GET_ALL_FOLDERS_SUCCESS,
+    payload: { folders: folders },
+  };
+};
+
+export const getAllFoldersFailure = (error: string) => {
+  return {
+    type: actionTypes.GET_ALL_FOLDERS_FAILURE,
+    payload: {
+      error: error,
+    },
+  };
+};
+
+interface ObjType {
+  folderId: string;
+  name: string;
+}
+
+export const renameFolderRequest = (obj: ObjType) => {
+  return {
+    type: actionTypes.RENAME_FOLDER_REQUEST,
+    payload: {
+      obj: obj,
+    },
+  };
+};
+
+export const renameFolderSuccess = (obj: ObjType) => {
+  return {
+    type: actionTypes.RENAME_FOLDER_SUCCESS,
+    payload: {
+      obj: obj,
+    },
+  };
+};
+
+export const renameFolderFailure = (error: string) => {
+  return {
+    type: actionTypes.RENAME_FOLDER_FAILURE,
+    payload: {
+      error: error,
+    },
+  };
+};
+
+interface BookmarkType{
+  url:string,
+  name:string,
+}
+
+export const createBookmarkRequest = (bookmark:BookmarkType) => {
+  
 }

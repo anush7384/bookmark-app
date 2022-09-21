@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import{Link, redirect} from "react-router-dom";
 
 import { signUpRequest } from "../../store/actions";
 import { FcGoogle } from "react-icons/fc";
@@ -39,6 +40,7 @@ const GoogleIcon = styled(FcGoogle)`
   }
 `;
 
+
 interface RightSignupProps {
   signUp: (obj: any) => void;
 }
@@ -65,29 +67,33 @@ const RightSignup = (props: RightSignupProps) => {
   const registerSchema = Yup.object({
     name: Yup.string().required("Enter your name"),
     email: Yup.string().email().required("Please enter your email"),
-    password: Yup.string().min(6).required("Please enter your password"),
+    password: Yup.string()
+      .min(8)
+      .required("Please enter your password")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])/,
+        "Must Contain One Uppercase, One Lowercase, One Number and One Special Case Character"
+      ),
   });
-
-
+  
   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
-    useFormik({
-      initialValues,
-      validationSchema: registerSchema,
-      validateOnChange: true,
-      validateOnBlur: false,
-
-      onSubmit: (values, action) => {
-        let user ={
-          name:values.name,
-          email:values.email,
-          password:values.password,
-        }
-        props.signUp(user);
-        // navigate("/dashboard");
-        action.resetForm();
-      },
-    });
-
+  useFormik({
+    initialValues,
+    validationSchema: registerSchema,
+    validateOnChange: true,
+    validateOnBlur: false,
+    
+    onSubmit: (values, action) => {
+      let user ={
+        name:values.name,
+        email:values.email,
+        password:values.password,
+      }
+      props.signUp(user);
+      action.resetForm();
+    },
+  });
+  
   return (
     <styles.FormDiv page="signup">
       <styles.HeadingDiv>
@@ -179,16 +185,22 @@ const RightSignup = (props: RightSignupProps) => {
       </styles.GoogleDiv>
       <styles.LoginDiv>
         <styles.BottomPara>
-          Already have an account? <styles.A href="/login">Login</styles.A>
+          Already have an account? <Link style={{color:"#5352ed"}}to="/login"> Login</Link>
         </styles.BottomPara>
       </styles.LoginDiv>
     </styles.FormDiv>
   );
 };
 
+interface ObjType{
+    name:string,
+    email:string,
+    password:string,
+  };
+
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    signUp: (obj: any) => dispatch(signUpRequest(obj)),
+    signUp: (obj: ObjType) => dispatch(signUpRequest(obj)),
   };
 };
 

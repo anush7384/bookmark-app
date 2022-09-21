@@ -1,22 +1,17 @@
 import { signUpSuccess } from "../../actions";
 
 export interface UserAuthStateType {
-  // signedUpUsers: {
-  //   name: string;
-  //   userName: string;
-  //   password: string;
-  // }[],
-  signedUpUsers:UserType[],
+  users:UserType[],
   error:string,
 }
 
 export interface UserType{
   name:string,
   email:string,
-  createdAt:string,
+  createdAt:any, // time type
   id:string,
-  updatedAt:string,
-  deletedAt:string,
+  updatedAt:any, // time type
+  deletedAt:any,  //time type
   isEmailVerified:string,
   token:string,
 }

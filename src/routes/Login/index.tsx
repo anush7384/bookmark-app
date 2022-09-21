@@ -2,16 +2,9 @@ import { useState, ReactElement } from "react";
 import styled from "styled-components";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import {
-  Formik,
-  Field,
-  FormikState,
-  FormikHelpers,
-  FieldInputProps,
-  ErrorMessage,
-  useFormik,
-} from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
+import {Link} from "react-router-dom";
 
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Container } from "../Signup";
@@ -103,6 +96,10 @@ const Login = (props: LoginPropsType): ReactElement => {
   const registerSchema = Yup.object({
     email: Yup.string().email().required("Please enter your email"),
     password: Yup.string().min(6).required("Please enter your password"),
+    // .matches(
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])/,
+    //   "Must Contain One Uppercase, One Lowercase, One Number and One Special Case Character"
+    // ),
   });
   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
     useFormik({
@@ -112,13 +109,11 @@ const Login = (props: LoginPropsType): ReactElement => {
       validateOnBlur: false,
 
       onSubmit: (values, action) => {
-        console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
-        props.login({email:values.email,password:values.password});
+        props.login({ email: values.email, password: values.password });
 
         action.resetForm();
       },
     });
-
   return (
     <Container>
       <LeftPage />
@@ -132,40 +127,50 @@ const Login = (props: LoginPropsType): ReactElement => {
               <b>Log In</b>
             </styles.HeadDiv>
           </styles.HeadingDiv>
-            <form onSubmit={handleSubmit}>
-              <styles.InputDiv>
-                <Input
-                  type="text"
-                  id="email"
-                  name="email"
-                  placeholder="Email"
-                  value={values.email}
-                  onChange={handleChange}
-                />
-              </styles.InputDiv>
-              {errors.email ? <styles.ErrorDiv>{errors.email}</styles.ErrorDiv> : <></>}
-              <styles.InputDiv>
-                <Input
-                  type={show ? "text" : "password"}
-                  id="password"
-                  name="password"
-                  placeholder="Password"
-                  value={values.password}
-                  onChange={handleChange}
-                />
-                <ShowHideDiv>
-                  {show ? (
-                    <HideIcon onClick={showHandler} />
-                  ) : (
-                    <ShowIcon onClick={showHandler} />
-                  )}
-                </ShowHideDiv>
-              </styles.InputDiv>
-              {errors.password ? <styles.ErrorDiv>{errors.password}</styles.ErrorDiv> : <></>}
-              <styles.SignupDiv>
-                <styles.Button type="submit">Login</styles.Button>
-              </styles.SignupDiv>
-            </form>
+          <form onSubmit={handleSubmit}>
+            <styles.InputDiv>
+              <Input
+                type="text"
+                id="email"
+                name="email"
+                placeholder="Email"
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            </styles.InputDiv>
+            {touched.email && errors.email ? (
+              <styles.ErrorDiv>{errors.email}</styles.ErrorDiv>
+            ) : (
+              <></>
+            )}
+            <styles.InputDiv>
+              <Input
+                type={show ? "text" : "password"}
+                id="password"
+                name="password"
+                placeholder="Password"
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              <ShowHideDiv>
+                {show ? (
+                  <HideIcon onClick={showHandler} />
+                ) : (
+                  <ShowIcon onClick={showHandler} />
+                )}
+              </ShowHideDiv>
+            </styles.InputDiv>
+            {touched.password && errors.password ? (
+              <styles.ErrorDiv>{errors.password}</styles.ErrorDiv>
+            ) : (
+              <></>
+            )}
+            <styles.SignupDiv>
+              <styles.Button type="submit">Login</styles.Button>
+            </styles.SignupDiv>
+          </form>
           <ForgotDiv>
             <div>
               <ForgotA href="/forgot">forgot password</ForgotA>
@@ -173,7 +178,10 @@ const Login = (props: LoginPropsType): ReactElement => {
           </ForgotDiv>
           <styles.LoginDiv>
             <NoPara>
-              Don't have an account yet? <styles.A href="/">Sign Up</styles.A>
+              Don't have an account yet?
+              <Link to="/" style={{ color: "#5352ed" }}>
+                Sign Up
+              </Link>
             </NoPara>
           </styles.LoginDiv>
         </styles.FormDiv>

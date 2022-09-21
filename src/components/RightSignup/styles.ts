@@ -227,9 +227,6 @@ export const styles = {
     }
   `,
 
-  A: styled.a`
-    color: #5352ed;
-  `,
   HeadingDiv: styled.div`
     width: 100%;
     height: 40px;

@@ -2,7 +2,7 @@ import { UserAuthStateType, UserAuthActionType } from "./types"
 import {actionTypes} from "../../actionTypes/index";
 
 const initialState:UserAuthStateType = {
-    signedUpUsers:[],
+    users:[],
     error:"",
 }
 
@@ -12,7 +12,7 @@ export const userAuth = (state = initialState, action:UserAuthActionType) => {
       case "SIGNUP_SUCCESS":
         return {
           ...state,
-          signedUpUsers: [...state.signedUpUsers, { ...action.payload.user }],
+          users: [...state.users, { ...action.payload.user }],
         };
       // case actionTypes.SIGNUP_FAILURE:
       case "SIGNUP_FAILURE":
@@ -23,7 +23,7 @@ export const userAuth = (state = initialState, action:UserAuthActionType) => {
       case "LOGIN_SUCCESS":
         return {
           ...state,
-          signedUpUsers: [...state.signedUpUsers, { ...action.payload.user }],
+          users: [...state.users, { ...action.payload.user }],
         };
       case "LOGIN_FAILURE":
         return {

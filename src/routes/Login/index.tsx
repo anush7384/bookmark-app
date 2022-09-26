@@ -1,4 +1,4 @@
-import { useState, ReactElement } from "react";
+import { useState, ReactElement, Fragment } from "react";
 import styled from "styled-components";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import {Link} from "react-router-dom";
 
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { ClipLoader } from "react-spinners";
 import { Container } from "../Signup";
 import { LeftPage } from "../Signup";
 import Input from "../../components/shared/Input";
@@ -72,9 +73,18 @@ const NoPara = styled.p`
     margin-top: 2%;
   }
 `;
+const SpinDiv = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Div = styled.div`
+  margin-top: 15%;
+`;
 
 interface LoginPropsType {
-  login: (obj: any) => void;
+  login: (obj: any) => void,
+  spinner: boolean,
 }
 
 interface FormValues {
@@ -115,78 +125,84 @@ const Login = (props: LoginPropsType): ReactElement => {
       },
     });
   return (
-    <Container>
-      <LeftPage />
-      <RightContainer>
-        <styles.FormDiv page="login">
-          <styles.HeadingDiv>
-            <styles.BackDiv>
-              <IoIosArrowRoundBack size="30px" />
-            </styles.BackDiv>
-            <styles.HeadDiv>
-              <b>Log In</b>
-            </styles.HeadDiv>
-          </styles.HeadingDiv>
-          <form onSubmit={handleSubmit}>
-            <styles.InputDiv>
-              <Input
-                type="text"
-                id="email"
-                name="email"
-                placeholder="Email"
-                value={values.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </styles.InputDiv>
-            {touched.email && errors.email ? (
-              <styles.ErrorDiv>{errors.email}</styles.ErrorDiv>
-            ) : (
-              <></>
-            )}
-            <styles.InputDiv>
-              <Input
-                type={show ? "text" : "password"}
-                id="password"
-                name="password"
-                placeholder="Password"
-                value={values.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              <ShowHideDiv>
-                {show ? (
-                  <HideIcon onClick={showHandler} />
-                ) : (
-                  <ShowIcon onClick={showHandler} />
-                )}
-              </ShowHideDiv>
-            </styles.InputDiv>
-            {touched.password && errors.password ? (
-              <styles.ErrorDiv>{errors.password}</styles.ErrorDiv>
-            ) : (
-              <></>
-            )}
-            <styles.SignupDiv>
-              <styles.Button type="submit">Login</styles.Button>
-            </styles.SignupDiv>
-          </form>
-          <ForgotDiv>
-            <div>
-              <ForgotA href="/forgot">forgot password</ForgotA>
-            </div>
-          </ForgotDiv>
-          <styles.LoginDiv>
-            <NoPara>
-              Don't have an account yet?
-              <Link to="/" style={{ color: "#5352ed" }}>
-                Sign Up
-              </Link>
-            </NoPara>
-          </styles.LoginDiv>
-        </styles.FormDiv>
-      </RightContainer>
-    </Container>
+    <Fragment>
+      {
+        props.spinner===true?(
+          <SpinDiv><Div><ClipLoader size="120px"/></Div></SpinDiv>
+        ):
+      (<Container>
+        <LeftPage />
+        <RightContainer>
+          <styles.FormDiv page="login">
+            <styles.HeadingDiv>
+              <styles.BackDiv>
+                <IoIosArrowRoundBack size="30px" />
+              </styles.BackDiv>
+              <styles.HeadDiv>
+                <b>Log In</b>
+              </styles.HeadDiv>
+            </styles.HeadingDiv>
+            <form onSubmit={handleSubmit}>
+              <styles.InputDiv>
+                <Input
+                  type="text"
+                  id="email"
+                  name="email"
+                  placeholder="Email"
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </styles.InputDiv>
+              {touched.email && errors.email ? (
+                <styles.ErrorDiv>{errors.email}</styles.ErrorDiv>
+              ) : (
+                <></>
+              )}
+              <styles.InputDiv>
+                <Input
+                  type={show ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  placeholder="Password"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                <ShowHideDiv>
+                  {show ? (
+                    <HideIcon onClick={showHandler} />
+                  ) : (
+                    <ShowIcon onClick={showHandler} />
+                  )}
+                </ShowHideDiv>
+              </styles.InputDiv>
+              {touched.password && errors.password ? (
+                <styles.ErrorDiv>{errors.password}</styles.ErrorDiv>
+              ) : (
+                <></>
+              )}
+              <styles.SignupDiv>
+                <styles.Button type="submit">Login</styles.Button>
+              </styles.SignupDiv>
+            </form>
+            <ForgotDiv>
+              <div>
+                <ForgotA href="/forgot">forgot password</ForgotA>
+              </div>
+            </ForgotDiv>
+            <styles.LoginDiv>
+              <NoPara>
+                Don't have an account yet?
+                <Link to="/" style={{ color: "#5352ed" }}>
+                  Sign Up
+                </Link>
+              </NoPara>
+            </styles.LoginDiv>
+          </styles.FormDiv>
+        </RightContainer>
+      </Container>)}
+    </Fragment>
   );
 };
 
@@ -196,4 +212,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(Login);
+const mapStateToProps = (state:any) => {
+  return{
+    spinner: state.userAuth.loginSpinner,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

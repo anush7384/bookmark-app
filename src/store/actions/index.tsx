@@ -80,6 +80,30 @@ export const createFolderSuccess = (response: any) => {
   };
 };
 
+export const deleteFolderRequest = (id:string) => {
+  return{
+    type:actionTypes.DELETE_FOLDER_REQUEST,
+    payload:{
+      id:id,
+    }
+  }
+};
+
+export const deleteFolderSuccess = (id:string) => {
+  return{
+    type:actionTypes.DELETE_FOLDER_SUCCESS,
+    payload:{
+      id:id,
+    }
+  };
+}
+
+export const deleteFolderFailure = () => {
+  return{
+    type:actionTypes.DELETE_FOLDER_FAILURE,
+  }
+}
+
 export const createFolderFailure = (error: any) => {
   return {
     type: actionTypes.CREATE_FOLDER_FAILURE,
@@ -141,11 +165,48 @@ export const renameFolderFailure = (error: string) => {
   };
 };
 
-interface BookmarkType{
-  url:string,
-  name:string,
+interface BookmarkType {
+  url: string;
+  name: string;
 }
 
-export const createBookmarkRequest = (bookmark:BookmarkType) => {
-  
+export const createBookmarkRequest = (bookmark: BookmarkType) => {
+  return {
+    type: actionTypes.CREATE_BOOKMARK_REQUEST,
+    payload: {
+      bookmark: bookmark,
+    },
+  };
+};
+
+export const deleteBookmarkRequest = (id:string) => {
+  return{
+    type:actionTypes.DELETE_BOOKMARK_REQUEST,
+    payload:{
+      id:id,
+    },
+  };
+};
+
+export const getBookmarksRequest =(folderId:string) =>{
+  return{
+    type:actionTypes.GET_BOOKMARKS_REQUEST,
+    payload:{
+      id:folderId,
+    },
+  };
+};
+
+interface MoveType{
+  folderId:string,
+  bookmarkId:string,
 }
+
+export const moveBookmarkRequest = (obj:MoveType) =>{
+  return{
+    type:actionTypes.MOVE_BOOKMARK_REQUEST,
+    payload:{
+      obj:obj,
+    },
+  };
+};

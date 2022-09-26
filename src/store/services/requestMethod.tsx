@@ -19,6 +19,26 @@ const requestMethod = async (path: string, method: string, data: any) => {
     body: JSON.stringify(data),
   };
 
+  const deleteMethod = {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${auth}`,
+    },
+    body: JSON.stringify(data),
+  };
+
+  const patchMethod = {
+    method: "PATCH",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${auth}`,
+    },
+    body: JSON.stringify(data),
+  };
+
   const putMethod = {
     method: "PUT",
     headers: {
@@ -26,12 +46,17 @@ const requestMethod = async (path: string, method: string, data: any) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${auth}`,
     },
-    body:JSON.stringify(data),
+    body: JSON.stringify(data),
   };
-
   const result = await fetch(
     URL.concat(path),
-    method === "POST" ? postMethod : method === "GET"?getMethod:putMethod
+    method === "POST"
+      ? postMethod
+      : method === "GET"
+      ? getMethod
+      : method === "DELETE"
+      ? deleteMethod
+      : method==="PATCH"?patchMethod:putMethod
   );
 
   const response = await result.json();

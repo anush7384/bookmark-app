@@ -83,6 +83,11 @@ export const folderReducer = (state = initialState, action: any) => {
         ...state,
         error: action.payload.error,
       };
+      case actionTypes.DELETE_FOLDER_SUCCESS:
+        return{
+          ...state,
+          folders:state.folders.filter((folder:any)=> folder.id!==action.payload.id),
+        }
     case actionTypes.GET_ALL_FOLDERS_SUCCESS:
       return {
         ...state,

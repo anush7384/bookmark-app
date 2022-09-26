@@ -15,9 +15,8 @@ export function* createFolder(action:ActionType) : any {
         let obj = {
             name:action.payload.name,
         }
-        
         let response = yield requestMethod("folder","POST",obj);
-        yield put(createFolderSuccess(response));   
+        yield put(createFolderSuccess(response)); 
     }
     catch(error){
         yield put(createFolderFailure(error));

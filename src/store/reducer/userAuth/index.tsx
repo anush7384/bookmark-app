@@ -2,6 +2,7 @@ import { UserAuthStateType, UserAuthActionType } from "./types"
 
 const initialState:UserAuthStateType = {
     users:[],
+    user:{},
     error:"",
     loginSpinner:false,
     signUpSpinner:false,
@@ -40,6 +41,11 @@ export const userAuth = (state = initialState, action:UserAuthActionType) => {
           ...state,
           error: action.payload.message,
         };
+      case "GET_USER_SUCCESS":
+        return{
+          ...state,
+          user:action.payload.user,
+        }
       default:
         return state;
     }

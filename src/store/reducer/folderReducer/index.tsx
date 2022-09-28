@@ -8,6 +8,7 @@ interface StateType {
 const initialState = {
   folders: [],
   error: "",
+  folderSpinner:false,
 };
 
 type UserType = {
@@ -88,10 +89,16 @@ export const folderReducer = (state = initialState, action: any) => {
           ...state,
           folders:state.folders.filter((folder:any)=> folder.id!==action.payload.id),
         }
+        case actionTypes.GET_ALL_FOLDERS_REQUEST:
+          return{
+            ...state,
+            folderSpinner:true,
+          }
     case actionTypes.GET_ALL_FOLDERS_SUCCESS:
       return {
         ...state,
         folders: action.payload.folders,
+        folderSpinner:false,
       };
     case actionTypes.GET_ALL_FOLDERS_FAILURE:
       return {

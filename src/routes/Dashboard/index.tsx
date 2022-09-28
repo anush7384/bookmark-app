@@ -3,117 +3,96 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import styled from "styled-components";
 
-import  FolderCard from "./FolderCard";
+import Input from "../../components/shared/Input/index";
+import {styles} from "./styles";
 import Nav from "../../components/Nav/index";
 import QuickLink from "../../components/QuickLink/index";
 import { createFolderRequest, requestAllFolders } from "../../store/actions";
 import LeftDashboard from '../../components/LeftDashboard/index';
+import Bookmarks from "../../components/Bookmarks";
+
+const searchIcon: string =
+  require("../../utils/Images/search_icon.svg").default;
+
 
 interface DashboardProps{
     createFolder:(name:string) => void,
     requestFolders:() => void,
-    folders:any[],
 }
 
 const HeadDiv = styled.div`
     border:1px solid black;
 `
-const FullDiv = styled.div`
-    width:100%;
-    height:100%;
-    display:flex;
-    flex-direction:row;
+const MidSearchDiv = styled.div`
+  width:30%;
+  height:70%;
+  margin-top:7px;
+  border:1px solid #dcdcdc;
+  background-color:#f4f4f4;
+  border-radius:10px;
+  display:flex;
+  flex-direction:row;
 `
-const LeftDiv = styled.div`
+const MidSearchIconDiv = styled.div`
+  width:5%;
+  height:60%;
+  margin-top:5px;
+  margin-left:1%;
+`
+const MidInputDiv = styled.div`
+  width:90%;
+  height:98%;
+`
+const SearchIcon = styled.img`
+  height:13px;
+  margin-top:9px;
+`
+const AddLinkButton = styled.button`
   width: 18%;
-  height: 100%;
-  box-shadow: 0 0 45px lightgrey;
+  height: 45px;
+  font-size: 15px;
+  :hover {
+    cursor: pointer;
+  }
+  margin-top:5px;
+  margin-left:51.9%;
+  background-color: white;
+  border: none;
+  border: 2px solid #5352ed;
+  border-radius: 10px;
+  font-family: "Inter", sans-serif;
+  color: #5352ed;
 `;
-const RightDiv = styled.div`
-  width:81.5%;
-  height:100%;
-  display:flex;
-  flex-direction:column;
-`
-const RightFullDiv = styled.div`
-  // border:1px solid grey;
-  width:94.5%;
-  margin-left:4%;
-  height:100%;
-  display:flex;
-  flex-direction:column;
-`
-const NavDiv = styled.div`
-  height:12%;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-`
-const QuickDiv = styled.div`
-  height:34%;
-`
-const MidDiv = styled.div`
-  height:8%;
-  margin-top:2px;
-  border:1px solid grey;
-`
-
 
 const Dashboard = (props:DashboardProps) => {
-    // const [folder,setFolder] = useState(""); 
   return (
-    <FullDiv>
-      <LeftDiv><LeftDashboard/></LeftDiv>
-      <RightDiv>
-        <RightFullDiv>
-          <NavDiv>
-            <Nav/>
-          </NavDiv>
-          <QuickDiv><QuickLink/></QuickDiv>
-          <MidDiv>Mid Div </MidDiv>
-        </RightFullDiv>
-        {/* <HeadDiv>
-          <h1>DashBoard</h1>
-          <input
-            type="text"
-            placeholder="Folder Name"
-            value={folder}
-            onChange={(e) => setFolder(e.target.value)}
-          />
-          <button
-            onClick={() => {
-              props.createFolder(folder);
-              setFolder("");
-            }}
-          >
-            Create Folder
-          </button>
-          <br />
-          <button
-            onClick={() => {
-              props.requestFolders();
-            }}
-          >
-            Get All Folders
-          </button>
-          <br />
-          <br />
-          <button
-            onClick={() => {
-              localStorage.clear();
-            }}
-          >
-            Logout
-          </button>
-        </HeadDiv>
-          {props.folders.map((folder) => {
-            return (
-              <FolderCard key={folder.id} id={folder.id} name={folder.name} />
-            );
-          })} */}
-      </RightDiv>
-    </FullDiv>
+    <styles.FullDiv>
+      <styles.LeftDiv>
+        <LeftDashboard />
+      </styles.LeftDiv>
+      <styles.RightDiv>
+        <styles.RightFullDiv>
+          <styles.NavDiv>
+            <Nav />
+          </styles.NavDiv>
+          <styles.QuickDiv>
+            <QuickLink />
+          </styles.QuickDiv>
+          <styles.MidDiv>
+            <MidSearchDiv>
+              <MidSearchIconDiv>
+                <SearchIcon src={searchIcon} alt="icon" />
+              </MidSearchIconDiv>
+              <MidInputDiv>
+                <Input type="text" where="search" placeholder="search..."/>
+              </MidInputDiv>
+            </MidSearchDiv>
+            <AddLinkButton>+ ADD LINK</AddLinkButton>
+          </styles.MidDiv>
+          <Bookmarks/>
+        </styles.RightFullDiv>
+      </styles.RightDiv>
+    </styles.FullDiv>
   );
 };
 
@@ -124,10 +103,4 @@ const mapDispatchToProps = (dispatch:Dispatch) => {
     }
 }
 
-const mapStateToProps = (state:any) => {
-    return{
-        folders:state.folderReducer.folders,
-    }
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(Dashboard);
+export default connect(null,mapDispatchToProps)(Dashboard);

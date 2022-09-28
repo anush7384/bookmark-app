@@ -124,7 +124,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     deleteFolder:(id:string)=>dispatch(deleteFolderRequest(id)),
     renameFolder: (obj: ObjType) => dispatch(renameFolderRequest(obj)),
-    createBookmark: (obj: BookmarkType) => dispatch(createBookmarkRequest(obj)),
+    createBookmark: (obj: any) => dispatch(createBookmarkRequest(obj)),
     deleteBookmark: (id: string) => dispatch(deleteBookmarkRequest(id)),
     getBookmarks: (id: string) => dispatch(getBookmarksRequest(id)),
     moveBookmark:(obj:MoveType) => dispatch(moveBookmarkRequest(obj)),

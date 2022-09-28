@@ -168,6 +168,7 @@ export const renameFolderFailure = (error: string) => {
 interface BookmarkType {
   url: string;
   name: string;
+  folderId:string;
 }
 
 export const createBookmarkRequest = (bookmark: BookmarkType) => {

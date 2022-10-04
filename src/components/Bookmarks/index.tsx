@@ -1,96 +1,333 @@
-import {useState} from "react";
-import styled from "styled-components";
+import { useEffect, useState } from "react";
 
-import { ClipLoader } from "react-spinners";
+import Modal from "@mui/material/Modal";
+import styles from "./styles";
 import { useGetState } from "../../hooks";
+import { Dispatch } from "redux";
+import { connect } from "react-redux";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { toggleFavoriteRequest } from "../../store/actions";
+import {
+  deleteBookmarkRequest,
+  moveBookmarkRequest,
+} from "../../store/actions";
+import { BiEditAlt } from "react-icons/bi";
+import { VscFiles } from "react-icons/vsc";
+import {
+  BsFillJournalBookmarkFill,
+  BsHeart,
+  BsFillHeartFill,
+} from "react-icons/bs";
+import { AiOutlineDelete } from "react-icons/ai";
+import { SyncLoader } from "react-spinners";
+
+const folderIcon: string =
+  require("../../utils/Images/Folder/folder_icon.svg").default;
 const bookmarkImage: string =
   require("../../utils/Images/bookmark_image.svg").default;
+const optionIcon: string =
+  require("../../utils/Images/Folder/options.svg").default;
 
-const CardDiv = styled.div`
-  width: 25%;
-  height: 98%;
-  @media screen and (max-width: 1100px) {
-    width: 30%;
-  }
-  display: flex;
-  flex-direction: column;
-  border-radius: 20px;
-  box-shadow: 0px 6px 12px -6px rgba(24, 39, 75, 0.12),
-    0px 8px 24px -4px rgba(24, 39, 75, 0.08);
-  border: 0.5px solid #e2e4e7;
-`;
-const ImageDiv = styled.div`
-  width: 90%;
-  height: 55%;
-  margin-top: 4%;
-  margin-left: 5%;
-  border: 1px solid red;
-`;
-const MidDiv = styled.div`
-  display: flex;
-  flex-direction: row;
-  height: 10%;
-  width: 90%;
-  margin-left: 5%;
-  border: 1px solid green;
-`;
-const DescDiv = styled.div`
-  height: 25%;
-  width: 90%;
-  margin-left: 5%;
-  border: 1px solid red;
-  overflow: auto;
-`;
-const Image = styled.img`
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
-`;
-
-const MainDiv = styled.div`
-  height: 45%;
-  width: 100%;
-  border: 1px solid blue;
-  display: flex;
-  flex=direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  overflow: auto;
-`;
-const Bookmarks = () => {
-    let { bookmarks,bookmarkSpinner } = useGetState();
+interface BookmarksPropsType {
+  deleteBookmark: (id: string) => void;
+  moveBookmark: (obj: MoveObjType) => void;
+  toggleFavorite: (id: string) => void;
+}
+const Bookmarks = (props: BookmarksPropsType) => {
+  let {
+    bookmarks,
+    bookmarkSpinner,
+    folders,
+    message,
+    folderid,
+    processing,
+    vertical,
+  } = useGetState();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openFolder, setOpenFolder] = useState(false);
+  const [folderId, setFolderId] = useState("");
+  const [bookmarkId, setBookmarkId] = useState("");
+  let folder = folders.filter((folder: any) => folder.id === folderid);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const moveBookmarkHandler = () => {
+    let obj = {
+      folderId: folderId,
+      bookmarkId: bookmarkId,
+    };
+    props.moveBookmark(obj);
+  };
+  useEffect(() => {
+    if (folderId !== "") moveBookmarkHandler();
+  }, [folderId]);
   return (
-    <MainDiv>
-      {
-      bookmarks.length === 0 ?
-    // bookmarkSpinner?<ClipLoader/>:
-      (
-        <h1>No bookmarks</h1>
-      ) :(
-        bookmarks.map((bookmark: any) => (
-          //  <Bookmark key={bookmark.id} bookmark={bookmark}/>
-          <CardDiv key={bookmark.id}>
-            <ImageDiv>
-              <Image
-                src={
-                  // props.bookmark.imageUrl
-                  // props.bookmark.imageUrl === ""
-                  //   ?
-                  bookmarkImage
-                  //   : props.bookmark.imageUrl
-                }
-              />
-            </ImageDiv>
-            <MidDiv>
-              {bookmark.name}
-              <button>delete</button>
-            </MidDiv>
-            <DescDiv>{bookmark.description}</DescDiv>
-          </CardDiv>
-        ))
+    <>
+      {vertical === false ? (
+        <styles.MainDiv>
+          {bookmarkSpinner === true ? (
+            <styles.SpinnerDiv>
+              <styles.Spinner color="#4777f5" />
+            </styles.SpinnerDiv>
+          ) : bookmarks.length === 0 ? (
+            <styles.NoBookmarkDiv>
+              <styles.NoBookmarkIcon>
+                <BsFillJournalBookmarkFill size="40px" color="#5352ed" />
+              </styles.NoBookmarkIcon>
+              <styles.NoBookmarkFoundDiv>{message}</styles.NoBookmarkFoundDiv>
+              <styles.NoBookmarkLastDiv>
+                Keep content organised with folders
+              </styles.NoBookmarkLastDiv>
+            </styles.NoBookmarkDiv>
+          ) : (
+            bookmarks.map((bookmark: any) => (
+              <styles.CardDiv key={bookmark.id}>
+                <styles.ImageDiv
+                  onClick={() => window.open(`${bookmark.url}`, "_blank")}
+                >
+                  <styles.Image
+                    src={
+                      bookmark.imageUrl === ""
+                        ? bookmarkImage
+                        : bookmark.imageUrl
+                    }
+                    alt=""
+                  />
+                </styles.ImageDiv>
+                <Menu
+                  keepMounted
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  open={Boolean(anchorEl)}
+                >
+                  <div style={{ display: "none" }}>a</div>
+                  <MenuItem
+                    onClick={() => {
+                      handleClose();
+                      props.deleteBookmark(bookmarkId);
+                    }}
+                    sx={{ color: "#5352ED" }}
+                  >
+                    Delete
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleClose();
+                      setOpenFolder(true);
+                    }}
+                    sx={{ color: "#5352ED" }}
+                  >
+                    Move
+                  </MenuItem>
+                </Menu>
+                <styles.MidDiv>
+                  <styles.BookMarkNameDiv>
+                    {bookmark.name}
+                  </styles.BookMarkNameDiv>
+                  <styles.FavDiv>
+                    {bookmark.isFavorite ? (
+                      <BsFillHeartFill
+                        size="100%"
+                        color="#e01606"
+                        onClick={() => props.toggleFavorite(bookmark.id)}
+                      />
+                    ) : (
+                      <BsHeart
+                        size="100%"
+                        onClick={() => props.toggleFavorite(bookmark.id)}
+                      />
+                    )}
+                  </styles.FavDiv>
+                  <styles.OptionDiv>
+                    <img
+                      src={optionIcon}
+                      alt=""
+                      style={{ width: "60%", height: "60%" }}
+                      onClick={(e: any) => {
+                        setBookmarkId(bookmark.id);
+                        setAnchorEl(e.currentTarget);
+                      }}
+                    />
+                  </styles.OptionDiv>
+                </styles.MidDiv>
+                <styles.DescDiv>
+                  {bookmark.description === ""
+                    ? "This is a Generalised description for Every bookmark which doesnt have their own description.as it didnt have any default description."
+                    : bookmark.description}
+                </styles.DescDiv>
+                <styles.PathDiv>
+                  <styles.PathFolderIconDiv>
+                    <img src={folderIcon} alt="" />
+                  </styles.PathFolderIconDiv>
+                  <styles.PathFolderNameDiv>
+                    {folder[0].name}
+                  </styles.PathFolderNameDiv>
+                </styles.PathDiv>
+                <Modal open={openFolder} sx={{ opacity: "70%" }}>
+                  <styles.BoxDiv>
+                    <styles.FolderItemsDiv>
+                      {folders.map((folder: any) => {
+                        return (
+                          <styles.FolderDiv
+                            onClick={() => {
+                              setFolderId(folder.id);
+                              setOpenFolder(false);
+                            }}
+                            key={folder.id}
+                          >
+                            <styles.ContentDiv>
+                              <styles.IconDiv>
+                                <img src={folderIcon} alt="folder_icon" />
+                              </styles.IconDiv>
+                              <styles.FolderNameDiv>
+                                {folder.name}
+                              </styles.FolderNameDiv>
+                            </styles.ContentDiv>
+                          </styles.FolderDiv>
+                        );
+                      })}
+                    </styles.FolderItemsDiv>
+                  </styles.BoxDiv>
+                </Modal>
+                <Modal open={processing} sx={{ opacity: "30%" }}>
+                  <styles.ProcessingDiv>
+                    <SyncLoader color="white" />
+                  </styles.ProcessingDiv>
+                </Modal>
+              </styles.CardDiv>
+            ))
+          )}
+        </styles.MainDiv>
+      ) : (
+        <styles.MainVDiv>
+          {bookmarkSpinner === true ? (
+            <styles.SpinnerDiv>
+              <styles.Spinner color="#4777f5" />
+            </styles.SpinnerDiv>
+          ) : bookmarks.length === 0 ? (
+            <styles.NoBookmarkDiv>
+              <styles.NoBookmarkIcon>
+                <BsFillJournalBookmarkFill size="40px" color="#5352ed" />
+              </styles.NoBookmarkIcon>
+              <styles.NoBookmarkFoundDiv>{message}</styles.NoBookmarkFoundDiv>
+              <styles.NoBookmarkLastDiv>
+                Keep content organised with folders
+              </styles.NoBookmarkLastDiv>
+            </styles.NoBookmarkDiv>
+          ) : (
+            bookmarks.map((bookmark: any) => (
+              <styles.CardVDiv key={bookmark.id}>
+                <styles.ImageVDiv>
+                  <styles.ImageV
+                    src={
+                      bookmark.imageUrl === ""
+                        ? bookmarkImage
+                        : bookmark.imageUrl
+                    }
+                    alt=""
+                  />
+                </styles.ImageVDiv>
+                <styles.MidVDiv>
+                  <styles.NameVDiv>{bookmark.name}</styles.NameVDiv>
+                  <styles.DescVDiv>
+                    {bookmark.description === ""
+                      ? "This is a Generalised description for Every bookmark which doesnt have their own description.as it didnt have any default description."
+                      : bookmark.description}
+                  </styles.DescVDiv>
+                </styles.MidVDiv>
+                <styles.PathVDiv>
+                  <styles.PathCenterDiv>
+                    <styles.PathIconVDiv>
+                      <img src={folderIcon} alt="" style={{ width: "75%" }} />
+                    </styles.PathIconVDiv>
+                    <styles.PathNameVDiv>{folder[0].name}</styles.PathNameVDiv>
+                  </styles.PathCenterDiv>
+                </styles.PathVDiv>
+                <styles.OtherVDiv>
+                  <styles.OtherCenterDiv>
+                    <styles.FavVDiv>
+                      {bookmark.isFavorite ? (
+                        <BsFillHeartFill
+                          size="100%"
+                          color="#e01606"
+                          onClick={() => props.toggleFavorite(bookmark.id)}
+                        />
+                      ) : (
+                        <BsHeart
+                          size="100%"
+                          color="#9D9B9F"
+                          onClick={() => props.toggleFavorite(bookmark.id)}
+                        />
+                      )}
+                    </styles.FavVDiv>
+                    <styles.MoveVDiv>
+                      <VscFiles
+                        size="20px"
+                        color="#9D9B9F"
+                        onClick={() => {
+                          setOpenFolder(true);
+                        }}
+                      />
+                    </styles.MoveVDiv>
+                    <styles.EditVDiv>
+                      <BiEditAlt size="20px" color="#9D9B9F" />
+                    </styles.EditVDiv>
+                    <styles.DeleteVDiv>
+                      <AiOutlineDelete size="20px" color="#9D9B9F" />
+                    </styles.DeleteVDiv>
+                  </styles.OtherCenterDiv>
+                </styles.OtherVDiv>
+                <Modal open={openFolder} sx={{ opacity: "70%" }}>
+                  <styles.BoxDiv>
+                    <styles.FolderItemsDiv>
+                      {folders.map((folder: any) => {
+                        return (
+                          <styles.FolderDiv
+                            onClick={() => {
+                              setFolderId(folder.id);
+                              setOpenFolder(false);
+                            }}
+                            key={folder.id}
+                          >
+                            <styles.ContentDiv>
+                              <styles.IconDiv>
+                                <img src={folderIcon} alt="folder_icon" />
+                              </styles.IconDiv>
+                              <styles.FolderNameDiv>
+                                {folder.name}
+                              </styles.FolderNameDiv>
+                            </styles.ContentDiv>
+                          </styles.FolderDiv>
+                        );
+                      })}
+                    </styles.FolderItemsDiv>
+                  </styles.BoxDiv>
+                </Modal>
+                <Modal open={processing} sx={{ opacity: "30%" }}>
+                  <styles.ProcessingDiv>
+                    <SyncLoader color="white" />
+                  </styles.ProcessingDiv>
+                </Modal>
+              </styles.CardVDiv>
+            ))
+          )}
+        </styles.MainVDiv>
       )}
-    </MainDiv>
+    </>
   );
 };
 
-export default Bookmarks;
+interface MoveObjType {
+  folderId: string;
+  bookmarkId: string;
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    deleteBookmark: (id: string) => dispatch(deleteBookmarkRequest(id)),
+    moveBookmark: (obj: MoveObjType) => dispatch(moveBookmarkRequest(obj)),
+    toggleFavorite: (id: string) => dispatch(toggleFavoriteRequest(id)),
+  };
+};
+export default connect(null, mapDispatchToProps)(Bookmarks);

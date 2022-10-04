@@ -1,14 +1,14 @@
 import { Fragment, useState } from "react";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import styled from "styled-components";
 import Modal from "@mui/material/Modal";
 
-import { MdOutlineCancel } from "react-icons/md";
 import { styles } from "./styles";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { renameFolderRequest, deleteFolderRequest } from "../../store/actions";
+import { BarLoader, ClipLoader, FadeLoader } from "react-spinners";
+import { useGetState } from "../../hooks";
 
 const expand: string = require("../../utils/Images/Folder/expand.svg").default;
 const folderIcon: string =
@@ -16,91 +16,20 @@ const folderIcon: string =
 const optionIcon: string =
   require("../../utils/Images/Folder/options.svg").default;
 
-const FolderDiv = styled.div`
-  display: flex;
-  flex-direction: row;
-  height: 35px;
-  padding-top: 2.5%;
-  width: 90%;
-  margin-left: 4.5%;
-  margin-top: 1px;
-  border-radius: 15px;
-  :hover{
-    background-color:#e4e3ff;
-    cursor:pointer;
-  }
-`;
-const ExpandDiv = styled.div`
-  width: 12%;
-  height: 80%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding-top: 5%;
-`;
-
-const ContentDiv = styled.div`
-  display: flex;
-  height: 80%;
-  flex-direction: row;
-  width: 70%;
-`;
-
-const IconDiv = styled.div`
-  width: 20%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const NameDiv = styled.div`
-  width: 75%;
-  margin-left: 3%;
-  height: 75%;
-  color: #77757f;
-  margin-top: 4%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-family: "Inter", sans-serif;
-`;
-
-const OptionDiv = styled.div`
-  width: 12%;
-  height: 50%;
-  text-align: right;
-  margin-top: 4%;
-  :hover {
-    cursor: pointer;
-  }
-`;
-
-const Ediv = styled.div`
-  width: 25%;
-  height: 25%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const CancelIcon = styled(MdOutlineCancel)`
-  margin-top: 8.5%;
-  margin-left: 30%;
-  :hover {
-    cursor: pointer;
-  }
-`;
-
 interface FolderPropsType {
   folder: any;
   renameFolder: (obj: ObjType) => void;
   deleteFolder: (id: string) => void;
+  showBookmark: (id: string,name:string) => any;
 }
 
 const Folder = (props: FolderPropsType) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [rename, setRename] = useState(false);
   const [name, setName] = useState("");
+  const [currentName, setCurrentName] = useState("");
+
+  const {Loading} = useGetState();
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -110,31 +39,28 @@ const Folder = (props: FolderPropsType) => {
       folderId: props.folder.id,
       name: name,
     };
-    props.renameFolder(obj);
     setRename(false);
+    props.renameFolder(obj);
   };
-
   return (
     <Fragment>
-      <FolderDiv>
-        <ExpandDiv>
-          <Ediv>
+      <styles.FolderDiv tabIndex={1}>
+        <styles.ExpandDiv>
+          <styles.Ediv>
             <img src={expand} alt="expand" />
-          </Ediv>
-        </ExpandDiv>
-        <ContentDiv>
-          <IconDiv>
+          </styles.Ediv>
+        </styles.ExpandDiv>
+        <styles.ContentDiv
+          onClick={() => props.showBookmark(props.folder.id, props.folder.name)}
+        >
+          <styles.IconDiv>
             <img src={folderIcon} alt="folder_icon" />
-          </IconDiv>
-          <NameDiv>{props.folder.name}</NameDiv>
-        </ContentDiv>
-        <OptionDiv>
-          <img
-            src={optionIcon}
-            alt="options_icon"
-            onClick={(e: any) => setAnchorEl(e.currentTarget)}
-          />
-        </OptionDiv>
+          </styles.IconDiv>
+          <styles.NameDiv>{props.folder.name}</styles.NameDiv>
+        </styles.ContentDiv>
+        <styles.OptionDiv onClick={(e: any) => setAnchorEl(e.currentTarget)}>
+          <img src={optionIcon} style={{width:"25%"}} alt="options_icon" />
+        </styles.OptionDiv>
         <Menu
           keepMounted
           anchorEl={anchorEl}
@@ -148,6 +74,7 @@ const Folder = (props: FolderPropsType) => {
           <MenuItem
             onClick={() => {
               handleClose();
+              setCurrentName(props.folder.name);
               setRename(true);
             }}
             sx={{ color: "#5352ED" }}
@@ -164,20 +91,22 @@ const Folder = (props: FolderPropsType) => {
             Delete
           </MenuItem>
         </Menu>
-      </FolderDiv>
+      </styles.FolderDiv>
       <Modal open={rename}>
         <styles.NewFolderBox>
           <styles.HeadingDiv>
             <styles.AddFolderHeadingDiv>
               Rename Folder
             </styles.AddFolderHeadingDiv>
-            <CancelIcon size="25px" onClick={() => setRename(false)} />
+            <styles.CancelIcon size="25px" onClick={() => setRename(false)} />
           </styles.HeadingDiv>
-          <styles.FolderNameDiv>Folder Name</styles.FolderNameDiv>
+          <styles.FolderNameDiv>
+            Folder Name :- {currentName}
+          </styles.FolderNameDiv>
           <styles.NewFolderInputDiv>
             <styles.AddFolderInput
               type="text"
-              placeholder="Enter Folder Name"
+              placeholder="Enter New Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -187,28 +116,11 @@ const Folder = (props: FolderPropsType) => {
           </styles.CreateFolderButton>
         </styles.NewFolderBox>
       </Modal>
-      {/* <Modal open={rename}>
-        <styles.NewFolderBox>
-          <styles.HeadingDiv>
-            <styles.AddFolderHeadingDiv>
-              Create Folder
-            </styles.AddFolderHeadingDiv>
-            <CancelIcon size="25px" onClick={() => setRename(false)} />
-          </styles.HeadingDiv>
-          <styles.FolderNameDiv>Folder Name</styles.FolderNameDiv>
-          <styles.NewFolderInputDiv>
-            <styles.AddFolderInput
-              type="text"
-              placeholder="Enter Folder Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </styles.NewFolderInputDiv>
-          <styles.CreateFolderButton onClick={renameHandler}>
-            Create
-          </styles.CreateFolderButton>
-        </styles.NewFolderBox>
-      </Modal> */}
+      <Modal open={Loading} sx={{ opacity: "20%" }}>
+        <styles.LoadingDiv>
+          <FadeLoader color="white" />
+        </styles.LoadingDiv>
+      </Modal>
     </Fragment>
   );
 };
@@ -226,4 +138,3 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 };
 
 export default connect(null, mapDispatchToProps)(Folder);
-// export default Folder;

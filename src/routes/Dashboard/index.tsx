@@ -4,67 +4,56 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 
 import Input from "../../components/shared/Input/index";
-import {styles} from "./styles";
+import { styles } from "./styles";
 import Nav from "../../components/Nav/index";
 import QuickLink from "../../components/QuickLink/index";
-import { createFolderRequest, requestAllFolders } from "../../store/actions";
-import LeftDashboard from '../../components/LeftDashboard/index';
+import {
+  cancelSearchBookmark,
+  createFolderRequest,
+  requestAllFolders,
+  searchBookmark,
+  toggleView,
+} from "../../store/actions";
+import LeftDashboard from "../../components/LeftDashboard/index";
 import Bookmarks from "../../components/Bookmarks";
+import { MdOutlineCancel } from "react-icons/md";
 
 const searchIcon: string =
   require("../../utils/Images/search_icon.svg").default;
 
-
-interface DashboardProps{
-    createFolder:(name:string) => void,
-    requestFolders:() => void,
+const SearchIcon = styled.img`
+  height: 13px;
+  margin-top: 9px;
+`;
+interface DashboardProps {
+  createFolder: (name: string) => void;
+  requestFolders: () => void;
+  searchBookmark: (name: string) => void;
+  cancelSearch: () => void;
+  toggleView: () => void;
 }
 
-const HeadDiv = styled.div`
-    border:1px solid black;
-`
-const MidSearchDiv = styled.div`
-  width:30%;
-  height:70%;
-  margin-top:7px;
-  border:1px solid #dcdcdc;
-  background-color:#f4f4f4;
-  border-radius:10px;
-  display:flex;
-  flex-direction:row;
-`
-const MidSearchIconDiv = styled.div`
-  width:5%;
-  height:60%;
-  margin-top:5px;
-  margin-left:1%;
-`
-const MidInputDiv = styled.div`
-  width:90%;
-  height:98%;
-`
-const SearchIcon = styled.img`
-  height:13px;
-  margin-top:9px;
-`
-const AddLinkButton = styled.button`
-  width: 18%;
-  height: 45px;
-  font-size: 15px;
-  :hover {
-    cursor: pointer;
-  }
-  margin-top:5px;
-  margin-left:51.9%;
-  background-color: white;
-  border: none;
-  border: 2px solid #5352ed;
-  border-radius: 10px;
-  font-family: "Inter", sans-serif;
-  color: #5352ed;
-`;
+const Dashboard = (props: DashboardProps) => {
+  const [search, setSearch] = useState("");
+  const [cancel, setCancel] = useState(false);
 
-const Dashboard = (props:DashboardProps) => {
+  const searchHandler = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === "Enter") {
+      setCancel(true);
+      props.searchBookmark(search);
+    }
+  };
+
+  const cancelSearchHandler = (): void => {
+    setCancel(false);
+    setSearch("");
+    props.cancelSearch();
+  };
+
+  const viewHandler = (): void => {
+    props.toggleView();
+  };
+
   return (
     <styles.FullDiv>
       <styles.LeftDiv>
@@ -79,28 +68,51 @@ const Dashboard = (props:DashboardProps) => {
             <QuickLink />
           </styles.QuickDiv>
           <styles.MidDiv>
-            <MidSearchDiv>
-              <MidSearchIconDiv>
+            <styles.MidSearchDiv>
+              <styles.MidSearchIconDiv>
                 <SearchIcon src={searchIcon} alt="icon" />
-              </MidSearchIconDiv>
-              <MidInputDiv>
-                <Input type="text" where="search" placeholder="search..."/>
-              </MidInputDiv>
-            </MidSearchDiv>
-            <AddLinkButton>+ ADD LINK</AddLinkButton>
+              </styles.MidSearchIconDiv>
+              <styles.MidInputDiv>
+                <Input
+                  type="text"
+                  where="search"
+                  placeholder="search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyPress={searchHandler}
+                />
+              </styles.MidInputDiv>
+              {cancel ? (
+                <styles.CancelIconDiv>
+                  <MdOutlineCancel color="grey" onClick={cancelSearchHandler} />
+                </styles.CancelIconDiv>
+              ) : (
+                <></>
+              )}
+            </styles.MidSearchDiv>
+            <styles.AddLinkButton>+ ADD LINK</styles.AddLinkButton>
+            <styles.DisplayDiv>
+              <styles.VerticalDiv onClick={viewHandler}>v</styles.VerticalDiv>
+              <styles.HorizontalDiv onClick={viewHandler}>
+                H
+              </styles.HorizontalDiv>
+            </styles.DisplayDiv>
           </styles.MidDiv>
-          <Bookmarks/>
+          <Bookmarks />
         </styles.RightFullDiv>
       </styles.RightDiv>
     </styles.FullDiv>
   );
 };
 
-const mapDispatchToProps = (dispatch:Dispatch) => {
-    return{
-        createFolder:(name:string) => dispatch(createFolderRequest(name)),
-        requestFolders :() => dispatch(requestAllFolders()),
-    }
-}
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    createFolder: (name: string) => dispatch(createFolderRequest(name)),
+    requestFolders: () => dispatch(requestAllFolders()),
+    searchBookmark: (name: string) => dispatch(searchBookmark(name)),
+    cancelSearch: () => dispatch(cancelSearchBookmark()),
+    toggleView: () => dispatch(toggleView()),
+  };
+};
 
-export default connect(null,mapDispatchToProps)(Dashboard);
+export default connect(null, mapDispatchToProps)(Dashboard);

@@ -17,6 +17,7 @@ export const styles = {
   SearchDiv: styled.div`
     width: 90%;
     height: 5%;
+    padding-right: 1%;
     margin-top: 2.5%;
     margin-bottom: 2.5%;
     display: flex;
@@ -33,7 +34,7 @@ export const styles = {
     height: 78%;
     margin-top: 3%;
     overflow: scroll;
-    scrollbar-width:none;
+    scrollbar-width: none;
     &::-webkit-scrollbar {
       display: none;
     }
@@ -46,6 +47,9 @@ export const styles = {
   `,
   FavLogdiv: styled.div`
     width: 90%;
+    &:focus {
+      background-color: #e4e3ff;
+    }
     margin-left: 4%;
     border-radius: 10px;
     height: 30%;
@@ -69,6 +73,9 @@ export const styles = {
   `,
   SearchIconDiv: styled.div`
     width: 6%;
+    @media screen and (max-width: 700px) {
+      width: 8%;
+    }
     margin-left: 3%;
     margin-right: 2%;
     display: flex;
@@ -77,7 +84,7 @@ export const styles = {
   `,
   BottomIconDiv: styled.div`
     width: 15%;
-    margin-left: 9%;
+    margin-left: 7%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -85,6 +92,19 @@ export const styles = {
   BottomNameDiv: styled.div`
     width: 65%;
     display: flex;
+    margin-left:6%;
+    @media screen and (max-width: 1100px) {
+      margin-left: 2%;
+    }
+    @media screen and (max-width: 950px) {
+      margin-left: 4%;
+      margin-bottom: 1%;
+      font-size: 18px;
+    }
+    @media screen and (max-width: 790px) {
+      margin-left: 6%;
+      font-size: 17px;
+    }
     flex-direction: column;
     justify-content: center;
     font-size: 20px;
@@ -98,7 +118,7 @@ export const styles = {
     justify-content: center;
     position: sticky;
     top: 0;
-    margin-top:2%;
+    margin-top: 2%;
   `,
   AddfolderButton: styled.button`
     width: 84%;
@@ -184,5 +204,31 @@ export const styles = {
     :hover {
       cursor: pointer;
     }
+  `,
+  LoaderDiv: styled.div`
+    height: 40%;
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 30%;
+    margin-left: 20%;
+  `,
+  CancelSearchDiv: styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    :hover {
+      cursor: pointer;
+    }
+  `,
+  NotFoundDiv: styled.div`
+    width: 70%;
+    margin-left: 14%;
+    font-family: "Inter", sans-serif;
+    height: 25%;
+    margin-top: 35%;
+    color: grey;
+    font-size: 22px;
   `,
 };

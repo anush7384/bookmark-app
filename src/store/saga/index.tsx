@@ -12,6 +12,7 @@ import {deleteBookmark} from './deleteBookmark';
 import getBookmarks from './getBookmarks';
 import moveBookmark from './moveBookmark';
 import getUser from './getUser';
+import toggleFavorite from './toggleFavorite';
 
 function* saga() {
     yield takeEvery(actionTypes.SIGNUP_REQUESTED,registerUser);
@@ -24,7 +25,8 @@ function* saga() {
     yield takeEvery(actionTypes.DELETE_BOOKMARK_REQUEST,deleteBookmark);
     yield takeEvery(actionTypes.GET_BOOKMARKS_REQUEST,getBookmarks);
     yield takeEvery(actionTypes.MOVE_BOOKMARK_REQUEST,moveBookmark);
-    yield takeEvery(actionTypes.GET_USER_REQUEST,getUser);  
+    yield takeEvery(actionTypes.GET_USER_REQUEST,getUser); 
+    yield takeEvery(actionTypes.TOGGLE_FAVORITE_REQUEST,toggleFavorite); 
 }
 
 export default saga;

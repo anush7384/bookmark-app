@@ -9,7 +9,7 @@ interface ActionType {
     bookmark: {
       url: string;
       name: string;
-      folderId:string;
+      folderId: string;
     };
   };
 }
@@ -22,13 +22,14 @@ export function* createBookmark(action: ActionType): any {
     };
     let response = yield requestMethod("bookmark", "POST", obj);
     let objMove = {
-        folderId:action.payload.bookmark.folderId,
-        bookmarkId:response.id,
-    }
-    let response2 = yield requestMethod("move-bookmark", "PATCH",objMove);
+      folderId: action.payload.bookmark.folderId,
+      bookmarkId: response.id,
+    };
+    let response2 = yield requestMethod("move-bookmark", "PATCH", objMove);
     yield put({
       type: actionTypes.CREATE_BOOKMARK_SUCCESS,
       payload: {
+        id: response2.folder.id,
         response: response,
       },
     });

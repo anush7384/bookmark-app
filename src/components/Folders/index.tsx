@@ -1,22 +1,23 @@
 import Folder from "../Folder/index";
+import { useGetState } from "../../hooks/index";
 
 interface propsType {
-  foldersArray: any[];
-  getBookmark: (id: string) => any;
+  getBookmark: (id: string,name:string) => any;
 }
 const Folders = (props: propsType) => {
+  const showBookmarkHandler = (id: string,name:string) => {
+    props.getBookmark(id,name);
+  };
+  const { folders } = useGetState();
   return (
     <>
-      {props.foldersArray.map((folder: any) => {
+      {folders.map((folder: any) => {
         return (
-          <div
+          <Folder
+            folder={folder}
             key={folder.id}
-            onClick={() => {
-              props.getBookmark(folder.id);
-            }}
-          >
-            <Folder folder={folder} />
-          </div>
+            showBookmark={showBookmarkHandler}
+            />
         );
       })}
     </>

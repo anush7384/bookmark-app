@@ -9,6 +9,9 @@ export const styles = {
   `,
   LeftDiv: styled.div`
     width: 18%;
+    @media screen and (max-width: 700px) {
+      width: 23%;
+    }
     height: 100%;
     box-shadow: 0 0 45px lightgrey;
   `,
@@ -26,19 +29,95 @@ export const styles = {
     flex-direction: column;
   `,
   NavDiv: styled.div`
-    height: 9%;
+    height: 8%;
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
   `,
   QuickDiv: styled.div`
-    height: 38%;
+    height: 36%;
   `,
   MidDiv: styled.div`
     height: 8%;
     margin-top: 2px;
-    display:flex;
-    flex-direction:row;
+    display: flex;
+    flex-direction: row;
+  `,
+  MidInputDiv: styled.div`
+    width: 85%;
+    height: 98%;
+    @media screen and (max-width: 900px) {
+      margin-left: 2%;
+    }
+    @media screen and (max-width: 650px) {
+      margin-left: 3%;
+    }
+  `,
+  HeadDiv: styled.div`
+    border: 1px solid black;
+  `,
+  MidSearchDiv: styled.div`
+    width: 30%;
+    height: 70%;
+    margin-top: 12px;
+    border: 1px solid #dcdcdc;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+  `,
+  MidSearchIconDiv: styled.div`
+    width: 5%;
+    height: 60%;
+    margin-top: 5px;
+    margin-left: 1%;
+  `,
+  CancelIconDiv: styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    :hover {
+      cursor: pointer;
+    }
+  `,
+  AddLinkButton: styled.button`
+    width: 18%;
+    height: 45px;
+    font-size: 15px;
+    @media screen and (max-width: 650px) {
+      font-size: 13px;
+    }
+    :hover {
+      cursor: pointer;
+    }
+    margin-top: 10px;
+    margin-left: 35%;
+    background-color: white;
+    border: none;
+    border: 2px solid #5352ed;
+    border-radius: 10px;
+    font-family: "Inter", sans-serif;
+    color: #5352ed;
+  `,
+  DisplayDiv: styled.div`
+    width: 8%;
+    height: 45px;
+    margin-top: 10px;
+    margin-left: 8%;
+    display: flex;
+    border: 1px solid red;
+    :hover{
+      cursor:pointer;
+    }
+  `,
+  VerticalDiv: styled.div`
+    width: 50%;
+    height:100%;
+    background-color:pink;
+  `,
+  HorizontalDiv: styled.div`
+    width: 50%;
+    background-color:red;
   `,
 };

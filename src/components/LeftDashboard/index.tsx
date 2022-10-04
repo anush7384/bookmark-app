@@ -3,14 +3,21 @@ import styled from "styled-components";
 
 import Folders from "../Folders/index";
 import { ClipLoader } from "react-spinners";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import Input from "../shared/Input/index";
 import { styles } from "./styles";
 import { MdFavorite } from "react-icons/md";
 import { FaSignOutAlt } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
 import { useGetState } from "../../hooks";
-import { requestAllFolders, createFolderRequest, getBookmarksRequest } from "../../store/actions";
+import {
+  requestAllFolders,
+  createFolderRequest,
+  getBookmarksRequest,
+  showFavoritesRequest,
+  searchFolder,
+  cancelSearchFolder,
+} from "../../store/actions";
 
 import Modal from "@mui/material/Modal";
 import { Dispatch } from "redux";
@@ -23,8 +30,11 @@ const searchIcon: string =
 interface LeftDashboardPropsType {
   requestFolders: () => void;
   createFolder: (name: string) => void;
-  getUser:()=>void;
-  getBookmarks:(id:string)=>void;
+  getUser: () => void;
+  getBookmarks: (id: string,name:string) => void;
+  showFavorites: () => void;
+  searchFolder: (name: string) => void;
+  cancelSearch: () => void;
 }
 
 const FavIcon = styled(MdFavorite)`
@@ -45,30 +55,33 @@ const CancelIcon = styled(MdOutlineCancel)`
   }
 `;
 
-const LoaderDiv = styled.div`
-  height: 40%;
-  width: 50%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-top: 30%;
-  margin-left: 20%;
-`;
-
 const LeftDashboard = (props: LeftDashboardPropsType) => {
   const [folderModal, setFolderModal] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
-
+  const [search, setSearch] = useState("");
+  const [cancel, setCancel] = useState(false);
   const addFolderHandler = () => {
     setFolderModal(true);
   };
 
+  const searchHandler = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === "Enter") {
+      setCancel(true);
+      props.searchFolder(search);
+    }
+  };
+
+  const cancelSearchHandler = () => {
+    props.cancelSearch();
+    setCancel(false);
+    setSearch("");
+  };
   useEffect(() => {
     props.requestFolders();
     props.getUser();
-  }, []);
+  },[] );
 
-  const { folders, folderSpinner } = useGetState();
+  const { folderSpinner, folders, folderLoading } = useGetState();
 
   const createFolderHandler = () => {
     props.createFolder(newFolderName);
@@ -76,10 +89,9 @@ const LeftDashboard = (props: LeftDashboardPropsType) => {
     setFolderModal(false);
   };
 
-  const getBookmarkHandler=(id:string)=>{
-      props.getBookmarks(id);
-  }
-
+  const getBookmarkHandler = (id: string,name:string) => {
+    props.getBookmarks(id,name);
+  };
   return (
     <styles.MainDiv>
       <styles.HeadDiv>
@@ -99,16 +111,28 @@ const LeftDashboard = (props: LeftDashboardPropsType) => {
           placeholder="Search..."
           style={{ width: "85%" }}
           use="dashboard"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyPress={searchHandler}
         />
+        {cancel ? (
+          <styles.CancelSearchDiv onClick={cancelSearchHandler}>
+            <MdOutlineCancel color="grey" />
+          </styles.CancelSearchDiv>
+        ) : (
+          <></>
+        )}
       </styles.SearchDiv>
       <styles.FolderDiv>
         <styles.FoldersDiv>
           {folderSpinner === true ? (
-            <LoaderDiv>
+            <styles.LoaderDiv>
               <ClipLoader />
-            </LoaderDiv>
+            </styles.LoaderDiv>
+          ) : folders.length === 0 && cancel === true ? (
+            <styles.NotFoundDiv>NOT FOUND</styles.NotFoundDiv>
           ) : (
-            <Folders foldersArray={folders} getBookmark={getBookmarkHandler} />
+            <Folders getBookmark={getBookmarkHandler} />
           )}
         </styles.FoldersDiv>
         <styles.AddFolderDiv>
@@ -118,7 +142,7 @@ const LeftDashboard = (props: LeftDashboardPropsType) => {
         </styles.AddFolderDiv>
       </styles.FolderDiv>
       <styles.BottomDiv>
-        <styles.FavLogdiv style={{ background: "#E4E3FF" }}>
+        <styles.FavLogdiv tabIndex={1} onClick={() => props.showFavorites()}>
           <styles.BottomIconDiv>
             <FavIcon />
           </styles.BottomIconDiv>
@@ -128,12 +152,12 @@ const LeftDashboard = (props: LeftDashboardPropsType) => {
           <styles.BottomIconDiv>
             <Logout />
           </styles.BottomIconDiv>
-          <styles.BottomNameDiv onClick={() => localStorage.clear()}>
+          <styles.BottomNameDiv onClick={() => {localStorage.clear();}}>
             Logout
           </styles.BottomNameDiv>
         </styles.FavLogdiv>
       </styles.BottomDiv>
-      <Modal open={folderModal}>
+      <Modal open={folderLoading===true?true:folderModal}>
         <styles.NewFolderBox>
           <styles.HeadingDiv>
             <styles.AddFolderHeadingDiv>
@@ -150,9 +174,13 @@ const LeftDashboard = (props: LeftDashboardPropsType) => {
               onChange={(e) => setNewFolderName(e.target.value)}
             />
           </styles.NewFolderInputDiv>
-          <styles.CreateFolderButton onClick={createFolderHandler}>
+          {folderLoading?
+          <styles.CreateFolderButton>
+            Creating..
+          </styles.CreateFolderButton>:
+            (<styles.CreateFolderButton onClick={createFolderHandler}>
             Create
-          </styles.CreateFolderButton>
+          </styles.CreateFolderButton>)}
         </styles.NewFolderBox>
       </Modal>
     </styles.MainDiv>
@@ -164,7 +192,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     requestFolders: () => dispatch(requestAllFolders()),
     getUser: () => dispatch({ type: "GET_USER_REQUEST" }),
     createFolder: (name: string) => dispatch(createFolderRequest(name)),
-    getBookmarks:(id:string) => dispatch(getBookmarksRequest(id)),
+    getBookmarks: (id: string,name:string) => dispatch(getBookmarksRequest(id,name)),
+    showFavorites: () => dispatch(showFavoritesRequest()),
+    searchFolder: (name: string) => dispatch(searchFolder(name)),
+    cancelSearch: () => dispatch(cancelSearchFolder()),
   };
 };
 

@@ -56,12 +56,14 @@ const RightSignup = (props: RightSignupProps) => {
     name: string;
     email: string;
     password: string;
+    terms:false
   }
 
   const initialValues: FormValues = {
     name: "",
     email: "",
     password: "",
+    terms:false,
   };
 
   const registerSchema = Yup.object({
@@ -74,6 +76,7 @@ const RightSignup = (props: RightSignupProps) => {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])/,
         "Must Contain One Uppercase, One Lowercase, One Number and One Special Case Character"
       ),
+    terms: Yup.boolean().oneOf([true],'You must accept terms and conditions'),
   });
   
   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
@@ -157,7 +160,13 @@ const RightSignup = (props: RightSignupProps) => {
           <></>
         )}
         <styles.ConsentDiv>
-          <styles.Check type="checkbox" />
+          <styles.Check
+            type="checkbox"
+            name="terms"
+            id="terms"
+            onChange={handleChange}
+            onBlur={handleBlur}
+          />
           <styles.Para>
             By signing up, you agree to the
             <styles.TermsA href="/terms">
@@ -166,6 +175,11 @@ const RightSignup = (props: RightSignupProps) => {
             </styles.TermsA>
           </styles.Para>
         </styles.ConsentDiv>
+        {touched.terms && errors.terms ? (
+          <styles.ErrorDiv>{errors.terms}</styles.ErrorDiv>
+        ) : (
+          <></>
+        )}
         <styles.SignupDiv>
           <styles.Button type="submit">Sign Up </styles.Button>
         </styles.SignupDiv>
@@ -185,7 +199,11 @@ const RightSignup = (props: RightSignupProps) => {
       </styles.GoogleDiv>
       <styles.LoginDiv>
         <styles.BottomPara>
-          Already have an account? <Link style={{color:"#5352ed"}}to="/login"> Login</Link>
+          Already have an account?{" "}
+          <Link style={{ color: "#5352ed" }} to="/login">
+            {" "}
+            Login
+          </Link>
         </styles.BottomPara>
       </styles.LoginDiv>
     </styles.FormDiv>

@@ -6,6 +6,7 @@ export interface UserAuthStateType {
   error: string;
   loginSpinner: boolean;
   signUpSpinner: boolean;
+  login:boolean;
 }
 
 export interface UserType {

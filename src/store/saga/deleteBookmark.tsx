@@ -17,7 +17,7 @@ export function* deleteBookmark(action:ActionType):any{
         };
         let response = yield requestMethod("bookmark","DELETE",obj);
         yield put({type:actionTypes.DELETE_BOOKMARK_SUCCESS,payload:{
-            response:response,
+            id:action.payload.id,
         }});
     } catch (error:any) {
         yield put({type:actionTypes.DELETE_BOOKMARK_FAILURE,payload:{

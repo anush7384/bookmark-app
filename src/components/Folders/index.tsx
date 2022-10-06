@@ -2,11 +2,12 @@ import Folder from "../Folder/index";
 import { useGetState } from "../../hooks/index";
 
 interface propsType {
-  getBookmark: (id: string,name:string) => any;
+  getBookmark: (id: string, name: string) => any;
 }
 const Folders = (props: propsType) => {
-  const showBookmarkHandler = (id: string,name:string) => {
-    props.getBookmark(id,name);
+  let { folderName } = useGetState();
+  const showBookmarkHandler = (id: string, name: string) => {
+    props.getBookmark(id, name);
   };
   const { folders } = useGetState();
   return (
@@ -16,8 +17,9 @@ const Folders = (props: propsType) => {
           <Folder
             folder={folder}
             key={folder.id}
+            selected={folderName}
             showBookmark={showBookmarkHandler}
-            />
+          />
         );
       })}
     </>

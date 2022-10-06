@@ -15,8 +15,11 @@ import {
   toggleView,
 } from "../../store/actions";
 import LeftDashboard from "../../components/LeftDashboard/index";
+import { FaGripHorizontal } from "react-icons/fa";
 import Bookmarks from "../../components/Bookmarks";
 import { MdOutlineCancel } from "react-icons/md";
+import { BsListUl } from "react-icons/bs";
+import { useGetState } from "../../hooks";
 
 const searchIcon: string =
   require("../../utils/Images/search_icon.svg").default;
@@ -24,6 +27,19 @@ const searchIcon: string =
 const SearchIcon = styled.img`
   height: 13px;
   margin-top: 9px;
+`;
+interface PropsTypeDisplay{
+  vertical:true|false;
+}
+const Horizontal = styled(FaGripHorizontal)`
+  margin-left: 18%;
+  color: ${(props: PropsTypeDisplay) =>
+    props.vertical === true ? "#77757F" : "white"};
+`;
+const Vertical = styled(BsListUl)`
+  margin-left: 14%;
+  color: ${(props: PropsTypeDisplay) =>
+    props.vertical === false ? "#77757F" : "white"};
 `;
 interface DashboardProps {
   createFolder: (name: string) => void;
@@ -36,6 +52,7 @@ interface DashboardProps {
 const Dashboard = (props: DashboardProps) => {
   const [search, setSearch] = useState("");
   const [cancel, setCancel] = useState(false);
+  let {vertical} = useGetState();
 
   const searchHandler = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === "Enter") {
@@ -92,10 +109,18 @@ const Dashboard = (props: DashboardProps) => {
             </styles.MidSearchDiv>
             <styles.AddLinkButton>+ ADD LINK</styles.AddLinkButton>
             <styles.DisplayDiv>
-              <styles.VerticalDiv onClick={viewHandler}>v</styles.VerticalDiv>
-              <styles.HorizontalDiv onClick={viewHandler}>
-                H
+              <styles.HorizontalDiv onClick={viewHandler} vertical={vertical}>
+                <Horizontal
+                  size="30px"
+                  vertical={vertical}
+                />
               </styles.HorizontalDiv>
+              <styles.VerticalDiv onClick={viewHandler} vertical={vertical}>
+                <Vertical
+                  size="30px"
+                  vertical={vertical}
+                />
+              </styles.VerticalDiv>
             </styles.DisplayDiv>
           </styles.MidDiv>
           <Bookmarks />

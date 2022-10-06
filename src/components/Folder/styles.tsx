@@ -2,6 +2,11 @@ import styled from "styled-components";
 import Box from "@mui/material/Box";
 import { MdOutlineCancel } from "react-icons/md";
 
+interface PropsType {
+  name: string;
+  selected: string;
+}
+
 export const styles = {
   NewFolderBox: styled(Box)`
     width: 350px;
@@ -165,7 +170,7 @@ export const styles = {
 
   OptionDiv: styled.div`
     width: 5%;
-    padding-right:2%;
+    padding-right: 2%;
     height: 45%;
     text-align: right;
     margin-top: 3.5%;
@@ -197,18 +202,17 @@ export const styles = {
     width: 90%;
     margin-left: 4.5%;
     margin-top: 1px;
-    &:focus {
-      background-color: #e4e3ff;
-    }
+    background-color: ${(props: PropsType) =>
+      props.name === props.selected ? "#e4e3ff" : ""};
     border-radius: 15px;
     :hover {
       background-color: #e4e3ff;
       cursor: pointer;
     }
   `,
-  LoadingDiv : styled.div`
-  margin-top:25%;
-  margin-left:48%;
-  width:10%;
-  `
+  LoadingDiv: styled.div`
+    margin-top: 25%;
+    margin-left: 48%;
+    width: 10%;
+  `,
 };

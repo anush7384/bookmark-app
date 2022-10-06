@@ -7,7 +7,7 @@ import { styles } from "./styles";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { renameFolderRequest, deleteFolderRequest } from "../../store/actions";
-import { BarLoader, ClipLoader, FadeLoader } from "react-spinners";
+import { FadeLoader } from "react-spinners";
 import { useGetState } from "../../hooks";
 
 const expand: string = require("../../utils/Images/Folder/expand.svg").default;
@@ -18,9 +18,10 @@ const optionIcon: string =
 
 interface FolderPropsType {
   folder: any;
+  selected: string;
   renameFolder: (obj: ObjType) => void;
   deleteFolder: (id: string) => void;
-  showBookmark: (id: string,name:string) => any;
+  showBookmark: (id: string, name: string) => any;
 }
 
 const Folder = (props: FolderPropsType) => {
@@ -29,7 +30,7 @@ const Folder = (props: FolderPropsType) => {
   const [name, setName] = useState("");
   const [currentName, setCurrentName] = useState("");
 
-  const {Loading} = useGetState();
+  const { Loading } = useGetState();
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -44,7 +45,7 @@ const Folder = (props: FolderPropsType) => {
   };
   return (
     <Fragment>
-      <styles.FolderDiv tabIndex={1}>
+      <styles.FolderDiv name={props.folder.name} selected={props.selected}>
         <styles.ExpandDiv>
           <styles.Ediv>
             <img src={expand} alt="expand" />
@@ -59,7 +60,7 @@ const Folder = (props: FolderPropsType) => {
           <styles.NameDiv>{props.folder.name}</styles.NameDiv>
         </styles.ContentDiv>
         <styles.OptionDiv onClick={(e: any) => setAnchorEl(e.currentTarget)}>
-          <img src={optionIcon} style={{width:"25%"}} alt="options_icon" />
+          <img src={optionIcon} style={{ width: "25%" }} alt="options_icon" />
         </styles.OptionDiv>
         <Menu
           keepMounted

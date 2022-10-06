@@ -218,7 +218,15 @@ const Bookmarks = (props: BookmarksPropsType) => {
           ) : (
             bookmarks.map((bookmark: any) => (
               <styles.CardVDiv key={bookmark.id}>
-                <styles.ImageVDiv>
+                <styles.SelectDiv>
+                  <input
+                    type="radio"
+                    style={{ width: "17px", height: "17px" }}
+                  />
+                </styles.SelectDiv>
+                <styles.ImageVDiv
+                  onClick={() => window.open(`${bookmark.url}`, "_blank")}
+                >
                   <styles.ImageV
                     src={
                       bookmark.imageUrl === ""
@@ -267,6 +275,7 @@ const Bookmarks = (props: BookmarksPropsType) => {
                         color="#9D9B9F"
                         onClick={() => {
                           setOpenFolder(true);
+                          setBookmarkId(bookmark.id);
                         }}
                       />
                     </styles.MoveVDiv>
@@ -274,7 +283,13 @@ const Bookmarks = (props: BookmarksPropsType) => {
                       <BiEditAlt size="20px" color="#9D9B9F" />
                     </styles.EditVDiv>
                     <styles.DeleteVDiv>
-                      <AiOutlineDelete size="20px" color="#9D9B9F" />
+                      <AiOutlineDelete
+                        size="20px"
+                        color="#9D9B9F"
+                        onClick={() => {
+                          props.deleteBookmark(bookmark.id);
+                        }}
+                      />
                     </styles.DeleteVDiv>
                   </styles.OtherCenterDiv>
                 </styles.OtherVDiv>

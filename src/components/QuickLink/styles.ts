@@ -150,7 +150,7 @@ const styles = {
   URLInput: styled.input`
     height: 100%;
     width: 89%;
-    padding-left: 5px;
+    padding-left: 15px;
     border-radius: 10px;
     border: none;
     font-size: medium;

@@ -17,13 +17,13 @@ interface QuickLinkProps {
 }
 
 const QuickLink = (props: QuickLinkProps) => {
-  const { folders, folderName, processing, addFolderId } = useGetState();
+  const { folders, folderName, processing, addFolderId, saving } = useGetState();
 
   const [link, setLink] = useState("");
   const [folder, setFolder] = useState("");
   const [folderId, setFolderId] = useState("");
   const [name, setName] = useState("");
-  const [openFolder, setOpenFolder] = useState(false);
+  const [openFolder, setOpenFolders] = useState(false);
   const [menu,setMenu] = useState(false);
   const createBookmarkHandler = () => {
     if(menu===true){
@@ -72,11 +72,10 @@ const QuickLink = (props: QuickLinkProps) => {
                 onChange={(e) => setName(e.target.value)}
               />
             </styles.BookmarkNameDiv>
-            <styles.FolderInputDiv onClick={() => {setOpenFolder(true);setMenu(true);}}>
+            <styles.FolderInputDiv onClick={() => {setOpenFolders(true);setMenu(true);}}>
               {folder === "" ? folderName : folder}
-              {/* {folder===""?folderName==""?"Folder Name":folderName:folder} */}
             </styles.FolderInputDiv>
-            {processing ? (
+            {saving ? (
               <styles.SaveButton onClick={createBookmarkHandler}>
                 Saving
               </styles.SaveButton>
@@ -100,7 +99,7 @@ const QuickLink = (props: QuickLinkProps) => {
                   onClick={() => {
                     setFolder(folder.name);
                     setFolderId(folder.id);
-                    setOpenFolder(false);
+                    setOpenFolders(false);
                   }}
                   key={folder.id}
                 >

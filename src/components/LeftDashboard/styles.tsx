@@ -223,11 +223,11 @@ export const styles = {
     }
   `,
   NotFoundDiv: styled.div`
-    width: 70%;
-    margin-left: 14%;
+    width: 60%;
+    margin-left: 22%;
     font-family: "Inter", sans-serif;
     height: 25%;
-    margin-top: 35%;
+    margin-top: 30%;
     color: grey;
     font-size: 22px;
   `,

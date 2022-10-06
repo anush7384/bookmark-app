@@ -11,6 +11,7 @@ interface StateType {
   addFolderId:string;
   search: [];
   vertical:boolean,
+  saving:boolean,
 }
 const initialState: StateType = {
   bookmarks: [],
@@ -22,7 +23,8 @@ const initialState: StateType = {
   message: "Click Folder to Load",
   favorites: [],
   search: [],
-  vertical:false,
+  vertical:true,
+  saving:false,
 };
 
 export const bookmarkReducer = (state = initialState, action: any) => {
@@ -38,6 +40,7 @@ export const bookmarkReducer = (state = initialState, action: any) => {
     case actionTypes.CREATE_BOOKMARK_REQUEST:
       return{
         ...state,
+        saving:true,
         processing:true,
       }
     case actionTypes.CREATE_BOOKMARK_SUCCESS:
@@ -47,6 +50,7 @@ export const bookmarkReducer = (state = initialState, action: any) => {
           action.payload.id === state.folderId
             ? [...state.bookmarks, action.payload.response]
             : [...state.bookmarks],
+        saving:false,
         processing:false,
       };
     case actionTypes.GET_BOOKMARKS_SUCCESS:

@@ -92,7 +92,7 @@ export const styles = {
       cursor: pointer;
     }
     margin-top: 10px;
-    margin-left: 35%;
+    margin-left: 40%;
     background-color: white;
     border: none;
     border: 2px solid #5352ed;
@@ -104,20 +104,33 @@ export const styles = {
     width: 8%;
     height: 45px;
     margin-top: 10px;
-    margin-left: 8%;
+    margin-left: 3.5%;
     display: flex;
-    border: 1px solid red;
-    :hover{
-      cursor:pointer;
+    :hover {
+      cursor: pointer;
     }
   `,
   VerticalDiv: styled.div`
     width: 50%;
-    height:100%;
-    background-color:pink;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 7px;
+    background-color: ${(props: DisplayProps) =>
+      props.vertical === true ? "#5352ED" : "#E6E2EA"};
   `,
   HorizontalDiv: styled.div`
     width: 50%;
-    background-color:red;
+    display: flex;
+    background-color: ${(props: DisplayProps) =>
+      props.vertical === true ? "#E6E2EA" : "#5352ED"};
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 7px;
   `,
 };
+
+interface DisplayProps{
+  vertical:true|false;
+}

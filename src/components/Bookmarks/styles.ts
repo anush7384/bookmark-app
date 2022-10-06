@@ -33,19 +33,28 @@ const styles = {
     width: 100%;
     height: 28%;
     margin-top: 1.5%;
-    border: 1px solid red;
     display: flex;
     border-radius: 15px;
+    box-shadow: 0px 6px 12px -6px rgba(24, 39, 75, 0.12),
+      0px 8px 24px -4px rgba(24, 39, 75, 0.08);
   `,
   ImageVDiv: styled.div`
     height: 80%;
     margin-top: 8px;
     width: 9%;
-    border: 1px solid red;
-    margin-left: 7%;
+    margin-left: 2.5%;
     :hover {
       cursor: pointer;
     }
+  `,
+  SelectDiv: styled.div`
+    width: 2%;
+    height: 80%;
+    margin-top: 8px;
+    margin-left: 2.5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   `,
   ImageDiv: styled.div`
     width: 90%;
@@ -59,7 +68,6 @@ const styles = {
   MidVDiv: styled.div`
     height: 80%;
     width: 35%;
-    border: 1px solid blue;
     margin-left: 1.5%;
     margin-top: 8px;
     font-family: "Inter", sans-serif;
@@ -68,14 +76,12 @@ const styles = {
     height: 30%;
     margin-top: 1%;
     width: 100%;
-    border: 1px solid red;
     font-size: 18px;
     font-weight: 600;
-    font-family:"Inter",sans-serif;
+    font-family: "Inter", sans-serif;
   `,
   PathVDiv: styled.div`
     width: 14%;
-    border: 1px solid red;
     height: 80%;
     margin-top: 8px;
     margin-left: 5%;
@@ -85,20 +91,17 @@ const styles = {
   `,
   PathCenterDiv: styled.div`
     height: 40%;
-    border: 1px solid red;
     display: flex;
   `,
   PathIconVDiv: styled.div`
     width: 15%;
     height: 65%;
     margin-top: 5px;
-    border: 1px solid black;
   `,
   OtherVDiv: styled.div`
     width: 23%;
     height: 80%;
     margin-top: 8px;
-    border: 1px solid black;
     margin-left: 5px;
     display: flex;
     flex-direction: column;
@@ -106,57 +109,50 @@ const styles = {
   `,
   OtherCenterDiv: styled.div`
     height: 40%;
-    border: 1px solid red;
-    display:flex;
-    :hover{
-      cursor:pointer;
+    display: flex;
+    :hover {
+      cursor: pointer;
     }
   `,
   FavVDiv: styled.div`
     width: 23%;
-    border: 1px solid red;
     height: 70%;
-    margin-top:1.5%;
+    margin-top: 1.5%;
   `,
   EditVDiv: styled.div`
     width: 23%;
     margin-left: 2px;
-    border: 1px solid red;
-    display:flex;
-    justify-content:center;
-    margin-top:1.5%;
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5%;
     height: 80%;
   `,
   MoveVDiv: styled.div`
     width: 23%;
     margin-left: 2px;
     height: 80%;
-    display:flex;
-    justify-content:center;
-    margin-top:1.5%;
-    border: 1px solid red;
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5%;
   `,
   DeleteVDiv: styled.div`
     width: 23%;
     height: 80%;
-    margin-top:1.5%;
-    display:flex;
-    justify-content:center;
+    margin-top: 1.5%;
+    display: flex;
+    justify-content: center;
     margin-left: 2px;
-    border: 1px solid red;
   `,
   PathNameVDiv: styled.div`
     width: 75%;
     height: 70%;
     margin-top: 4px;
-    border: 1px solid pink;
   `,
   DescVDiv: styled.div`
-    height: 50%;
+    height: 45%;
     width: 100%;
-    margin-top: 1.5%;
+    margin-top: 2%;
     font-size: 13px;
-    border: 1px solid black;
     overflow: auto;
     scrollbar-width: none;
     &::-webkit-scrollbar {
@@ -175,7 +171,8 @@ const styles = {
   BookMarkNameDiv: styled.div`
     width: 80%;
     margin-left: 0.5%;
-    font-size: 18px;
+    font-size: 20px;
+    font-weight:500;
     @media screen and (max-width: 950px) {
       font-size: 18px;
     }
@@ -245,8 +242,9 @@ const styles = {
   `,
   PathFolderNameDiv: styled.div`
     width: 40%;
-    margin-left: 2%;
-    color: #5352ed;
+    margin-left: 1%;
+    margin-top:2px;
+    // color: #5352ed;
     font-size: 14px;
     font-family: "Inter", sans-serif;
     display: flex;
@@ -280,6 +278,7 @@ const styles = {
     width: 350px;
     background-color: white;
     height: 250px;
+    outline:none;
     margin-left: 40%;
     margin-top: 15%;
     border-radius: 15px;
@@ -372,15 +371,17 @@ const styles = {
     margin-top: 17%;
   `,
   ProcessingDiv: styled.div`
-    margin-top: 25%;
-    margin-left: 50%;
-    width: 20%;
+    margin-top: 24%;
+    margin-left: 47%;
+    width: 7%;
+    height:30px;
+    padding-left:3%;
+    outline:none;
   `,
   MainVDiv: styled.div`
   height: 48%;
   width: 100%;
   display: flex;
-  border:1px solid red;
   flex:direction: column;
   flex-wrap: wrap;
   overflow: auto;

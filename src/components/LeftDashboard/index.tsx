@@ -31,10 +31,11 @@ interface LeftDashboardPropsType {
   requestFolders: () => void;
   createFolder: (name: string) => void;
   getUser: () => void;
-  getBookmarks: (id: string,name:string) => void;
+  getBookmarks: (id: string, name: string) => void;
   showFavorites: () => void;
   searchFolder: (name: string) => void;
   cancelSearch: () => void;
+  cancelAlert: () => void;
 }
 
 const FavIcon = styled(MdFavorite)`
@@ -60,10 +61,11 @@ const LeftDashboard = (props: LeftDashboardPropsType) => {
   const [newFolderName, setNewFolderName] = useState("");
   const [search, setSearch] = useState("");
   const [cancel, setCancel] = useState(false);
+  const { deleteFail } = useGetState();
+
   const addFolderHandler = () => {
     setFolderModal(true);
   };
-
   const searchHandler = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === "Enter") {
       setCancel(true);
@@ -79,7 +81,7 @@ const LeftDashboard = (props: LeftDashboardPropsType) => {
   useEffect(() => {
     props.requestFolders();
     props.getUser();
-  },[] );
+  }, []);
 
   const { folderSpinner, folders, folderLoading } = useGetState();
 
@@ -89,8 +91,8 @@ const LeftDashboard = (props: LeftDashboardPropsType) => {
     setFolderModal(false);
   };
 
-  const getBookmarkHandler = (id: string,name:string) => {
-    props.getBookmarks(id,name);
+  const getBookmarkHandler = (id: string, name: string) => {
+    props.getBookmarks(id, name);
   };
   return (
     <styles.MainDiv>
@@ -152,12 +154,41 @@ const LeftDashboard = (props: LeftDashboardPropsType) => {
           <styles.BottomIconDiv>
             <Logout />
           </styles.BottomIconDiv>
-          <styles.BottomNameDiv onClick={() => {localStorage.clear();}}>
+          <styles.BottomNameDiv
+            onClick={() => {
+              localStorage.clear();
+            }}
+          >
             Logout
           </styles.BottomNameDiv>
         </styles.FavLogdiv>
       </styles.BottomDiv>
-      <Modal open={folderLoading===true?true:folderModal}>
+      <Modal open={deleteFail}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            padding: "10px",
+            marginLeft: "45%",
+            opacity: "65%",
+            marginTop: "20%",
+            color: "red",
+            backgroundColor: "lightgrey",
+            width: "max-content",
+          }}
+        >
+          <div style={{ fontFamily: "Inter", fontSize: "20px" }}>
+            Cannot delete folder containing Bookmarks
+          </div>
+          <button
+            onClick={() => props.cancelAlert()}
+            style={{ width: "30px", marginLeft: "45%", cursor: "pointer" }}
+          >
+            OK
+          </button>
+        </div>
+      </Modal>
+      <Modal open={folderLoading === true ? true : folderModal}>
         <styles.NewFolderBox>
           <styles.HeadingDiv>
             <styles.AddFolderHeadingDiv>
@@ -174,13 +205,13 @@ const LeftDashboard = (props: LeftDashboardPropsType) => {
               onChange={(e) => setNewFolderName(e.target.value)}
             />
           </styles.NewFolderInputDiv>
-          {folderLoading?
-          <styles.CreateFolderButton>
-            Creating..
-          </styles.CreateFolderButton>:
-            (<styles.CreateFolderButton onClick={createFolderHandler}>
-            Create
-          </styles.CreateFolderButton>)}
+          {folderLoading ? (
+            <styles.CreateFolderButton>Creating..</styles.CreateFolderButton>
+          ) : (
+            <styles.CreateFolderButton onClick={createFolderHandler}>
+              Create
+            </styles.CreateFolderButton>
+          )}
         </styles.NewFolderBox>
       </Modal>
     </styles.MainDiv>
@@ -192,10 +223,12 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     requestFolders: () => dispatch(requestAllFolders()),
     getUser: () => dispatch({ type: "GET_USER_REQUEST" }),
     createFolder: (name: string) => dispatch(createFolderRequest(name)),
-    getBookmarks: (id: string,name:string) => dispatch(getBookmarksRequest(id,name)),
+    getBookmarks: (id: string, name: string) =>
+      dispatch(getBookmarksRequest(id, name)),
     showFavorites: () => dispatch(showFavoritesRequest()),
     searchFolder: (name: string) => dispatch(searchFolder(name)),
     cancelSearch: () => dispatch(cancelSearchFolder()),
+    cancelAlert: () => dispatch({ type: "CANCEL_DELETE_ALERT" }),
   };
 };
 

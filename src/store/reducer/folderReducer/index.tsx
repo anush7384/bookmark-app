@@ -7,10 +7,12 @@ interface StateType {
   folderLoading:boolean;
   Loading:boolean;
   search: [];
+  deleteFail:boolean;
 }
 
 const initialState: StateType = {
   folders: [],
+  deleteFail:false,
   Loading:false,
   folderLoading:false,
   error: "",
@@ -111,6 +113,12 @@ export const folderReducer = (state = initialState, action: any) => {
         ),
         Loading:false,
       };
+    case actionTypes.DELETE_FOLDER_FAILURE:
+      return{
+        ...state,
+        Loading:false,
+        deleteFail:true,
+      }
     case actionTypes.GET_ALL_FOLDERS_REQUEST:
       return {
         ...state,
@@ -162,6 +170,11 @@ export const folderReducer = (state = initialState, action: any) => {
         ...state,
         folders: state.search,
       };
+    case actionTypes.CANCEL_DELETE_ALERT:
+      return{
+        ...state,
+        deleteFail:false,
+      }
     default:
       return state;
   }

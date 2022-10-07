@@ -16,8 +16,13 @@ function* deleteFolder(action:ActionType):any{
         let obj = {
             folderId:id,
         }
-        let response = yield requestMethod("folder","DELETE",obj);
-        yield put(deleteFolderSuccess(id));
+        const url = `folder-bookmarks?folderId=${action.payload.id}`;
+        let response = yield requestMethod(url, "GET", obj);
+        if(response.length()>0){
+         yield requestMethod("folder","DELETE",obj);
+        yield put(deleteFolderSuccess(id));}
+        else
+        yield put(deleteFolderFailure());
     } catch (error) {
         yield put(deleteFolderFailure());
     }

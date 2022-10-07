@@ -17,6 +17,7 @@ export const useGetState = (): any => {
     addFolderId,
     vertical,
     saving,
+    deleteFail,
   } = useSelector((state: any) => ({
     folders: state.folderReducer.folders,
     user: state.userAuth.user,
@@ -33,6 +34,7 @@ export const useGetState = (): any => {
     addFolderId:state.bookmarkReducer.addFolderId,
     vertical:state.bookmarkReducer.vertical,
     saving:state.bookmarkReducer.saving,
+    deleteFail:state.folderReducer.deleteFail,
   }));
   return {
     folders,
@@ -50,5 +52,6 @@ export const useGetState = (): any => {
     addFolderId,
     vertical,
     saving,
+    deleteFail,
   };
 };

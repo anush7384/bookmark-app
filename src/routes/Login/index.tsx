@@ -1,6 +1,12 @@
+import { useState, ReactElement, Fragment, useEffect, useCallback } from "react";
 import styled from "styled-components";
-import { useState } from "react";
+import { Dispatch } from "redux";
+import { connect } from "react-redux";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Link } from "react-router-dom";
 
+import style from "./styles";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Container } from "../Signup";
 import { LeftPage } from "../Signup";
@@ -8,23 +14,8 @@ import Input from "../../components/shared/Input";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { RightContainer } from "../Signup";
 import { styles } from "./../../components/RightSignup/styles";
-
-const ShowHideDiv = styled.div`
-  width: 13%;
-  height: 40%;
-  margin-top: 3.5%;
-  @media screen and (max-width: 900px) {
-    margin-top: 7%;
-    margin-left: 3%;
-  }
-  @media screen and (max-width: 600px) {
-    margin-top: 4.5%;
-    margin-left: 0;
-  }
-  @media screen and (max-width: 400px) {
-    margin-top: 7%;
-  }
-`;
+import { loginRequest } from "../../store/actions";
+import { useGetState } from "../../hooks";
 
 const ShowIcon = styled(FaRegEye)`
   width: 100%;
@@ -42,79 +33,143 @@ const HideIcon = styled(FaRegEyeSlash)`
     width: 50%;
   }
 `;
-const ForgotDiv = styled.div`
-  width: 100%;
-  margin-top: 5%;
-  display: flex;
-  justify-content: center;
-  font-size: medium;
-`;
-const ForgotA = styled.a`
-  color: #5352ed;
-  text-decoration: none;
-`;
-const NoPara = styled.p`
-  color: #91919f;
-  @media screen and (max-width: 400px) {
-    font-size: small;
-  }
-  @media screen and (max-width: 960px) {
-    font-size: 15px;
-  }
-  @media screen and (max-width: 865px) {
-    font-size: 13px;
-    margin-top: 2%;
-  }
-`;
-const Login = () => {
+
+interface LoginPropsType {
+  login: (obj: any) => void;
+  spinner: boolean;
+}
+
+interface FormValues {
+  email: string;
+  password: string;
+}
+
+const Login = (props: LoginPropsType): ReactElement => {
   const [show, setShow] = useState(false);
-  const showHandler = () => {
+
+  let {login} = useGetState();
+
+  const showHandler = useCallback(() => {
     setShow(!show);
+  },[show]);
+  const initialValues: FormValues = {
+    email: "",
+    password: "",
   };
 
+  const registerSchema = Yup.object({
+    email: Yup.string().email().required("Please enter your email"),
+    password: Yup.string()
+      .min(6)
+      .required("Please enter your password")
+      // .matches(
+      //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])/,
+      //   "Must Contain One Uppercase, One Lowercase, One Number and One Special Case Character"
+      // )
+      ,
+  });
+  const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+    useFormik({
+      initialValues,
+      validationSchema: registerSchema,
+      validateOnChange: true,
+      validateOnBlur: false,
+
+      onSubmit: (values, action) => {
+        props.login({ email: values.email, password: values.password });
+        action.resetForm();
+      },
+    });
   return (
-    <Container>
-      <LeftPage />
-      <RightContainer>
-        <styles.FormDiv page="login">
-          <styles.HeadingDiv>
-            <styles.BackDiv>
-              <IoIosArrowRoundBack size="30px" />
-            </styles.BackDiv>
-            <styles.HeadDiv>
-              <b>Log In</b>
-            </styles.HeadDiv>
-          </styles.HeadingDiv>
-          <styles.InputDiv>
-            <Input placeholder="Email" />
-          </styles.InputDiv>
-          <styles.InputDiv>
-            <Input type={show ? "text" : "password"} placeholder="Password" />
-            <ShowHideDiv>
-              {show ? (
-                <HideIcon onClick={showHandler} />
-              ) : (
-                <ShowIcon onClick={showHandler} />
-              )}
-            </ShowHideDiv>
-          </styles.InputDiv>
-          <styles.SignupDiv>
-            <styles.Button>Login</styles.Button>
-          </styles.SignupDiv>
-          <ForgotDiv>
-            <div>
-              <ForgotA href="/forgot">forgot password</ForgotA>
-            </div>
-          </ForgotDiv>
-          <styles.LoginDiv>
-            <NoPara>
-              Don't have an account yet? <styles.A href="/">Sign Up</styles.A>
-            </NoPara>
-          </styles.LoginDiv>
-        </styles.FormDiv>
-      </RightContainer>
-    </Container>
+    <Fragment>
+        <Container>
+        <LeftPage />
+          <RightContainer>
+            <styles.FormDiv page="login">
+              <styles.HeadingDiv>
+                <styles.BackDiv>
+                  <IoIosArrowRoundBack size="30px" />
+                </styles.BackDiv>
+                <styles.HeadDiv>
+                  <b>Log In</b>
+                </styles.HeadDiv>
+              </styles.HeadingDiv>
+              <form onSubmit={handleSubmit}>
+                <styles.InputDiv>
+                  <Input
+                    type="text"
+                    id="email"
+                    name="email"
+                    placeholder="Email"
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                </styles.InputDiv>
+                {touched.email && errors.email ? (
+                  <styles.ErrorDiv>{errors.email}</styles.ErrorDiv>
+                ) : (
+                  <></>
+                )}
+                <styles.InputDiv>
+                  <Input
+                    type={show ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    value={values.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  <style.ShowHideDiv>
+                    {show ? (
+                      <HideIcon onClick={showHandler} />
+                    ) : (
+                      <ShowIcon onClick={showHandler} />
+                    )}
+                  </style.ShowHideDiv>
+                </styles.InputDiv>
+                {touched.password && errors.password ? (
+                  <styles.ErrorDiv>{errors.password}</styles.ErrorDiv>
+                ) : (
+                  <></>
+                )}
+                <styles.SignupDiv>
+                  <styles.Button type="submit">
+                    {props.spinner === true ? "Loging in....." : "Login"}
+                  </styles.Button>
+                </styles.SignupDiv>
+              </form>
+              <style.ForgotDiv>
+                <div>
+                  <style.ForgotA href="/forgot">forgot password</style.ForgotA>
+                </div>
+              </style.ForgotDiv>
+              <styles.LoginDiv>
+                <style.NoPara>
+                  Don't have an account yet?
+                  <Link to="/" style={{ color: "#5352ed" }}>
+                    Sign Up
+                  </Link>
+                </style.NoPara>
+              </styles.LoginDiv>
+            </styles.FormDiv>
+          </RightContainer>
+      </Container>
+    </Fragment>
   );
 };
 
-export default Login;
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    login: (obj: any) => dispatch(loginRequest(obj)),
+  };
+};
+
+const mapStateToProps = (state: any) => {
+  return {
+    spinner: state.userAuth.loginSpinner,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -38,10 +38,20 @@ export const styles = {
     flex-direction: row;
   `,
 
+  ErrorDiv: styled.div`
+    // height:10px;
+    padding: 0;
+    font-size: small;
+    color: red;
+  `,
+
   SignupDiv: styled.div`
     height: 50px;
     width: 100%;
     margin-top: 6%;
+    :hover {
+      cursor: pointer;
+    }
     @media screen and (max-width: 900px) {
       margin-top: 10%;
     }
@@ -63,7 +73,7 @@ export const styles = {
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin-top: 8%;
+    margin-top: 6%;
     height: 9%;
     margin-bottom: 0%;
     @media screen and (max-width: 400px) {
@@ -205,6 +215,10 @@ export const styles = {
     color: white;
     background-color: #5352ed;
     font-size: large;
+
+    :hover {
+      cursor: pointer;
+    }
   `,
 
   OrP: styled.p`
@@ -220,9 +234,6 @@ export const styles = {
     }
   `,
 
-  A: styled.a`
-    color: #5352ed;
-  `,
   HeadingDiv: styled.div`
     width: 100%;
     height: 40px;

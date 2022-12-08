@@ -2,9 +2,11 @@ import { signUpSuccess } from "../../actions";
 
 export interface UserAuthStateType {
   users: UserType[];
+  user: any;
   error: string;
   loginSpinner: boolean;
   signUpSpinner: boolean;
+  login:boolean;
 }
 
 export interface UserType {
@@ -53,6 +55,12 @@ type LoginFailure = {
     message: string;
   };
 };
+type GetUserSuccess = {
+  type: "GET_USER_SUCCESS";
+  payload: {
+    user: any;
+  };
+};
 
 export type UserAuthActionType =
   | RegisterSuccess
@@ -60,4 +68,5 @@ export type UserAuthActionType =
   | LoginSuccess
   | LoginFailure
   | RegisterRequest
-  | LoginRequest;
+  | LoginRequest
+  | GetUserSuccess;

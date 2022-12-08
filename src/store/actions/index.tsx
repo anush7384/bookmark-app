@@ -80,29 +80,29 @@ export const createFolderSuccess = (response: any) => {
   };
 };
 
-export const deleteFolderRequest = (id:string) => {
-  return{
-    type:actionTypes.DELETE_FOLDER_REQUEST,
-    payload:{
-      id:id,
-    }
-  }
+export const deleteFolderRequest = (id: string) => {
+  return {
+    type: actionTypes.DELETE_FOLDER_REQUEST,
+    payload: {
+      id: id,
+    },
+  };
 };
 
-export const deleteFolderSuccess = (id:string) => {
-  return{
-    type:actionTypes.DELETE_FOLDER_SUCCESS,
-    payload:{
-      id:id,
-    }
+export const deleteFolderSuccess = (id: string) => {
+  return {
+    type: actionTypes.DELETE_FOLDER_SUCCESS,
+    payload: {
+      id: id,
+    },
   };
-}
+};
 
 export const deleteFolderFailure = () => {
-  return{
-    type:actionTypes.DELETE_FOLDER_FAILURE,
-  }
-}
+  return {
+    type: actionTypes.DELETE_FOLDER_FAILURE,
+  };
+};
 
 export const createFolderFailure = (error: any) => {
   return {
@@ -168,6 +168,7 @@ export const renameFolderFailure = (error: string) => {
 interface BookmarkType {
   url: string;
   name: string;
+  folderId: string;
 }
 
 export const createBookmarkRequest = (bookmark: BookmarkType) => {
@@ -179,34 +180,86 @@ export const createBookmarkRequest = (bookmark: BookmarkType) => {
   };
 };
 
-export const deleteBookmarkRequest = (id:string) => {
-  return{
-    type:actionTypes.DELETE_BOOKMARK_REQUEST,
-    payload:{
-      id:id,
+export const deleteBookmarkRequest = (id: string) => {
+  return {
+    type: actionTypes.DELETE_BOOKMARK_REQUEST,
+    payload: {
+      id: id,
     },
   };
 };
 
-export const getBookmarksRequest =(folderId:string) =>{
-  return{
-    type:actionTypes.GET_BOOKMARKS_REQUEST,
-    payload:{
-      id:folderId,
+export const getBookmarksRequest = (folderId: string,folderName:string) => {
+  return {
+    type: actionTypes.GET_BOOKMARKS_REQUEST,
+    payload: {
+      id: folderId,
+      name:folderName,
     },
   };
 };
 
-interface MoveType{
-  folderId:string,
-  bookmarkId:string,
+interface MoveType {
+  folderId: string;
+  bookmarkId: string;
 }
 
-export const moveBookmarkRequest = (obj:MoveType) =>{
-  return{
-    type:actionTypes.MOVE_BOOKMARK_REQUEST,
-    payload:{
-      obj:obj,
+export const moveBookmarkRequest = (obj: MoveType) => {
+  return {
+    type: actionTypes.MOVE_BOOKMARK_REQUEST,
+    payload: {
+      obj: obj,
     },
+  };
+};
+
+export const toggleFavoriteRequest = (id: string) => {
+  return {
+    type: actionTypes.TOGGLE_FAVORITE_REQUEST,
+    payload: {
+      id: id,
+    },
+  };
+};
+
+export const showFavoritesRequest = () => {
+  return {
+    type: actionTypes.SHOW_FAVORITES,
+  };
+};
+
+export const searchBookmark = (name: string) => {
+  return {
+    type: actionTypes.SEARCH_BOOKMARK,
+    payload: {
+      name: name,
+    },
+  };
+};
+
+export const cancelSearchBookmark = () => {
+  return {
+    type: actionTypes.CANCEL_SEARCH_BOOKMARK,
+  };
+};
+
+export const searchFolder = (name: string) => {
+  return {
+    type: actionTypes.SEARCH_FOLDER,
+    payload: {
+      name: name,
+    },
+  };
+};
+
+export const cancelSearchFolder = () => {
+  return {
+    type: actionTypes.CANCEL_SEARCH_FOLDER,
+  };
+};
+
+export const toggleView = () => {
+  return{
+    type:actionTypes.TOGGLE_VIEW,
   };
 };

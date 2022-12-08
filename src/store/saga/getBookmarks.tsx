@@ -15,7 +15,7 @@ function* getBookmarks(action:ActionType):any{
         let obj = {
           folderId: action.payload.id,
         };
-        const url =`folder-bookmarks?"folderId"="${action.payload.id}"`
+        const url =`folder-bookmarks?folderId=${action.payload.id}`
         let response = yield requestMethod(url,"GET",obj);
         yield put({type:actionTypes.GET_BOOKMARKS_SUCCESS,payload:{
             response:response,

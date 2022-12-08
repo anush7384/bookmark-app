@@ -1,27 +1,99 @@
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 
-import Folder from "../Folder/index";
+import Folders from "../Folders/index";
+import { ClipLoader } from "react-spinners";
+import { connect } from "react-redux";
 import Input from "../shared/Input/index";
 import { styles } from "./styles";
-import {MdFavorite} from "react-icons/md";
-import {FaSignOutAlt} from "react-icons/fa";
+import { MdFavorite } from "react-icons/md";
+import { FaSignOutAlt } from "react-icons/fa";
+import { MdOutlineCancel } from "react-icons/md";
+import { useGetState } from "../../hooks";
+import {
+  requestAllFolders,
+  createFolderRequest,
+  getBookmarksRequest,
+  showFavoritesRequest,
+  searchFolder,
+  cancelSearchFolder,
+} from "../../store/actions";
+
+import Modal from "@mui/material/Modal";
+import { Dispatch } from "redux";
 
 const bookIcon: string =
   require("../../utils/Images/bookmark_icon.svg").default;
-const searchIcon: string = require("../../utils/Images/search_icon.svg").default;
+const searchIcon: string =
+  require("../../utils/Images/search_icon.svg").default;
+
+interface LeftDashboardPropsType {
+  requestFolders: () => void;
+  createFolder: (name: string) => void;
+  getUser: () => void;
+  getBookmarks: (id: string, name: string) => void;
+  showFavorites: () => void;
+  searchFolder: (name: string) => void;
+  cancelSearch: () => void;
+  cancelAlert: () => void;
+}
 
 const FavIcon = styled(MdFavorite)`
-    color:#5352Ed;
-    width:25px;
-    height:25px;
-` 
+  color: #5352ed;
+  width: 25px;
+  height: 25px;
+`;
 const Logout = styled(FaSignOutAlt)`
-    color:#5352ED;
-    width:25px;
-    height:25px;
-`
+  color: #5352ed;
+  width: 25px;
+  height: 25px;
+`;
+const CancelIcon = styled(MdOutlineCancel)`
+  margin-top: 8.5%;
+  margin-left: 30%;
+  :hover {
+    cursor: pointer;
+  }
+`;
 
-const LeftDashboard = () => {
+const LeftDashboard = (props: LeftDashboardPropsType) => {
+  const [folderModal, setFolderModal] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [search, setSearch] = useState("");
+  const [cancel, setCancel] = useState(false);
+  const { deleteFail } = useGetState();
+
+  const addFolderHandler = () => {
+    setFolderModal(true);
+  };
+  const searchHandler = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === "Enter") {
+      setCancel(true);
+      props.searchFolder(search);
+    }
+  };
+
+  const cancelSearchHandler = () => {
+    props.cancelSearch();
+    setCancel(false);
+    setSearch("");
+  };
+  useEffect(() => {
+    props.requestFolders();
+    props.getUser();
+  }, []);
+
+  const { folderSpinner, folders, folderLoading } = useGetState();
+
+  const createFolderHandler = () => {
+    props.createFolder(newFolderName);
+    setNewFolderName("");
+    setFolderModal(false);
+  };
+
+  const getBookmarkHandler = (id: string, name: string) => {
+    props.getBookmarks(id, name);
+  };
   return (
     <styles.MainDiv>
       <styles.HeadDiv>
@@ -41,14 +113,38 @@ const LeftDashboard = () => {
           placeholder="Search..."
           style={{ width: "85%" }}
           use="dashboard"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyPress={searchHandler}
         />
+        {cancel ? (
+          <styles.CancelSearchDiv onClick={cancelSearchHandler}>
+            <MdOutlineCancel color="grey" />
+          </styles.CancelSearchDiv>
+        ) : (
+          <></>
+        )}
       </styles.SearchDiv>
       <styles.FolderDiv>
-        <Folder />
-        <Folder />
+        <styles.FoldersDiv>
+          {folderSpinner === true ? (
+            <styles.LoaderDiv>
+              <ClipLoader />
+            </styles.LoaderDiv>
+          ) : folders.length === 0 && cancel === true ? (
+            <styles.NotFoundDiv>NOT FOUND</styles.NotFoundDiv>
+          ) : (
+            <Folders getBookmark={getBookmarkHandler} />
+          )}
+        </styles.FoldersDiv>
+        <styles.AddFolderDiv>
+          <styles.AddfolderButton onClick={addFolderHandler}>
+            + Add Folder
+          </styles.AddfolderButton>
+        </styles.AddFolderDiv>
       </styles.FolderDiv>
       <styles.BottomDiv>
-        <styles.FavLogdiv style={{background:"#E4E3FF"}}>
+        <styles.FavLogdiv tabIndex={1} onClick={() => props.showFavorites()}>
           <styles.BottomIconDiv>
             <FavIcon />
           </styles.BottomIconDiv>
@@ -56,13 +152,84 @@ const LeftDashboard = () => {
         </styles.FavLogdiv>
         <styles.FavLogdiv>
           <styles.BottomIconDiv>
-            <Logout/>
+            <Logout />
           </styles.BottomIconDiv>
-          <styles.BottomNameDiv>Logout</styles.BottomNameDiv>
+          <styles.BottomNameDiv
+            onClick={() => {
+              localStorage.clear();
+            }}
+          >
+            Logout
+          </styles.BottomNameDiv>
         </styles.FavLogdiv>
       </styles.BottomDiv>
+      <Modal open={deleteFail}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            padding: "10px",
+            marginLeft: "45%",
+            opacity: "65%",
+            marginTop: "20%",
+            color: "red",
+            backgroundColor: "lightgrey",
+            width: "max-content",
+          }}
+        >
+          <div style={{ fontFamily: "Inter", fontSize: "20px" }}>
+            Cannot delete folder containing Bookmarks
+          </div>
+          <button
+            onClick={() => props.cancelAlert()}
+            style={{ width: "30px", marginLeft: "45%", cursor: "pointer" }}
+          >
+            OK
+          </button>
+        </div>
+      </Modal>
+      <Modal open={folderLoading === true ? true : folderModal}>
+        <styles.NewFolderBox>
+          <styles.HeadingDiv>
+            <styles.AddFolderHeadingDiv>
+              Create Folder
+            </styles.AddFolderHeadingDiv>
+            <CancelIcon size="25px" onClick={() => setFolderModal(false)} />
+          </styles.HeadingDiv>
+          <styles.FolderNameDiv>Folder Name</styles.FolderNameDiv>
+          <styles.NewFolderInputDiv>
+            <styles.AddFolderInput
+              type="text"
+              placeholder="Enter Folder Name"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+            />
+          </styles.NewFolderInputDiv>
+          {folderLoading ? (
+            <styles.CreateFolderButton>Creating..</styles.CreateFolderButton>
+          ) : (
+            <styles.CreateFolderButton onClick={createFolderHandler}>
+              Create
+            </styles.CreateFolderButton>
+          )}
+        </styles.NewFolderBox>
+      </Modal>
     </styles.MainDiv>
   );
 };
 
-export default LeftDashboard;
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    requestFolders: () => dispatch(requestAllFolders()),
+    getUser: () => dispatch({ type: "GET_USER_REQUEST" }),
+    createFolder: (name: string) => dispatch(createFolderRequest(name)),
+    getBookmarks: (id: string, name: string) =>
+      dispatch(getBookmarksRequest(id, name)),
+    showFavorites: () => dispatch(showFavoritesRequest()),
+    searchFolder: (name: string) => dispatch(searchFolder(name)),
+    cancelSearch: () => dispatch(cancelSearchFolder()),
+    cancelAlert: () => dispatch({ type: "CANCEL_DELETE_ALERT" }),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(LeftDashboard);

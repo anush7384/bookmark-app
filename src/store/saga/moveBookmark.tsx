@@ -18,7 +18,7 @@ function* moveBookmark(action:ActionType){
         let obj = action.payload.obj;
         let response = requestMethod("move-bookmark","PATCH",obj);
         yield put({type:actionTypes.MOVE_BOOKMARK_SUCCESS,payload:{
-            response:response,
+            id:obj.bookmarkId,
         }})
     } catch (error:any) {
         yield put({type:actionTypes.MOVE_BOOKMARK_FAILURE,payload:{
